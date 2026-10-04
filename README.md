@@ -56,6 +56,7 @@ A production-ready, full-stack **Smart Hostel Management System** built with **J
 
 ### 1. Running the Backend Server
 ```powershell
+# Navigate to backend directory
 cd backend
 
 # Option A: Run with Zero-Config H2 Database (Recommended)
@@ -69,10 +70,13 @@ java -jar target/smart-hostel-backend-1.0.0.jar --SPRING_DATASOURCE_PASSWORD=you
 
 ### 2. Running the Frontend Application
 ```powershell
+# Navigate to frontend directory
 cd frontend
 
-# Install dependencies and start Vite dev server
+# Step 1: Install frontend dependencies (required on first run)
 npm install
+
+# Step 2: Start Vite development server
 npm run dev
 ```
 - **Frontend App**: `http://localhost:5173`
