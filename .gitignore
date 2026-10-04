@@ -18,7 +18,3 @@ build/
 # Logs
 *.log
 npm-debug.log*
-
-# Project docs (excluded as per user instruction)
-PROJECT_DETAILS.md
-IMPLEMENTATION_PLAN.md
