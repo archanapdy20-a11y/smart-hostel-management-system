@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build outputs
+target/
+backend/target/
+dist/
+frontend/dist/
+build/
+
+# IDE and System
+.idea/
+.vscode/
+*.swp
+*.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
