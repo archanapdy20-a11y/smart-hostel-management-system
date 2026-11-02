@@ -5,6 +5,7 @@ import com.smarthostel.model.Complaint;
 import com.smarthostel.model.Student;
 import com.smarthostel.service.ComplaintService;
 import com.smarthostel.ui.components.ModernTable;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
 
@@ -58,11 +59,11 @@ public class ComplaintManagementPanel extends JPanel {
         searchField.addActionListener(e -> searchComplaints());
         filterPanel.add(searchField);
 
-        JButton btnSearch = UITheme.createSecondaryButton("Search");
+        JButton btnSearch = UITheme.createSecondaryButton("Search", new VectorIcon(VectorIcon.Type.SEARCH, 14, UITheme.TEXT_MAIN));
         btnSearch.addActionListener(e -> searchComplaints());
         filterPanel.add(btnSearch);
 
-        JButton btnReset = UITheme.createSecondaryButton("Reset");
+        JButton btnReset = UITheme.createSecondaryButton("Reset", new VectorIcon(VectorIcon.Type.REFRESH, 14, UITheme.TEXT_MAIN));
         btnReset.addActionListener(e -> {
             searchField.setText("");
             statusFilterBox.setSelectedIndex(0);
@@ -77,18 +78,18 @@ public class ComplaintManagementPanel extends JPanel {
         actionPanel.setBackground(UITheme.BG_CARD);
 
         if (isStudent) {
-            JButton btnSubmit = UITheme.createPrimaryButton("+ Report New Issue");
+            JButton btnSubmit = UITheme.createPrimaryButton("Report New Issue", new VectorIcon(VectorIcon.Type.ADD, 14, Color.WHITE));
             btnSubmit.addActionListener(e -> showSubmitComplaintDialog());
             actionPanel.add(btnSubmit);
         }
 
         if (canResolve) {
-            JButton btnResolve = UITheme.createPrimaryButton("🛠️ Update / Resolve Issue");
+            JButton btnResolve = UITheme.createPrimaryButton("Update / Resolve Issue", new VectorIcon(VectorIcon.Type.CHECK, 14, Color.WHITE));
             btnResolve.addActionListener(e -> showResolveDialog());
             actionPanel.add(btnResolve);
         }
 
-        JButton btnViewDetails = UITheme.createSecondaryButton("🔍 View Details");
+        JButton btnViewDetails = UITheme.createSecondaryButton("View Details", new VectorIcon(VectorIcon.Type.INFO, 14, UITheme.TEXT_MAIN));
         btnViewDetails.addActionListener(e -> showDetailsDialog());
         actionPanel.add(btnViewDetails);
 

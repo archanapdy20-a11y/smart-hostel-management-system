@@ -4,13 +4,12 @@ import com.smarthostel.config.SessionManager;
 import com.smarthostel.dao.NotificationDAO;
 import com.smarthostel.model.*;
 import com.smarthostel.service.*;
-import com.smarthostel.ui.components.StatCard;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.UITheme;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -56,7 +55,8 @@ public class StudentDashboardPanel extends JPanel {
         bannerText.setLayout(new BoxLayout(bannerText, BoxLayout.Y_AXIS));
         bannerText.setBackground(UITheme.PRIMARY_DARK);
 
-        JLabel welcomeLabel = new JLabel("Welcome back, " + (student != null ? student.getFullName() : (user != null ? user.getFullName() : "Resident")) + "!");
+        String residentName = student != null ? student.getFullName() : (user != null ? user.getFullName() : "Resident");
+        JLabel welcomeLabel = new JLabel("Welcome back, " + residentName + "!");
         welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
         welcomeLabel.setForeground(Color.WHITE);
 
@@ -81,7 +81,10 @@ public class StudentDashboardPanel extends JPanel {
 
         // Room Card
         JPanel cardRoom = UITheme.createCard();
-        cardRoom.setLayout(new BoxLayout(cardRoom, BoxLayout.Y_AXIS));
+        cardRoom.setLayout(new BorderLayout(12, 0));
+        JPanel roomTextBox = new JPanel();
+        roomTextBox.setLayout(new BoxLayout(roomTextBox, BoxLayout.Y_AXIS));
+        roomTextBox.setOpaque(false);
         JLabel rTitle = new JLabel("MY ALLOCATED ROOM");
         rTitle.setFont(UITheme.FONT_SMALL_BOLD);
         rTitle.setForeground(UITheme.TEXT_MUTED);
@@ -91,16 +94,21 @@ public class StudentDashboardPanel extends JPanel {
         roomSubLabel = new JLabel("-");
         roomSubLabel.setFont(UITheme.FONT_SMALL);
         roomSubLabel.setForeground(UITheme.TEXT_MUTED);
-        cardRoom.add(rTitle);
-        cardRoom.add(Box.createVerticalStrut(6));
-        cardRoom.add(roomValLabel);
-        cardRoom.add(Box.createVerticalStrut(4));
-        cardRoom.add(roomSubLabel);
+        roomTextBox.add(rTitle);
+        roomTextBox.add(Box.createVerticalStrut(4));
+        roomTextBox.add(roomValLabel);
+        roomTextBox.add(Box.createVerticalStrut(2));
+        roomTextBox.add(roomSubLabel);
+        cardRoom.add(roomTextBox, BorderLayout.CENTER);
+        cardRoom.add(UITheme.createIconCircle(VectorIcon.Type.ROOMS, UITheme.PRIMARY, 42, 20), BorderLayout.EAST);
         cardsPanel.add(cardRoom);
 
         // Fee Card
         JPanel cardFee = UITheme.createCard();
-        cardFee.setLayout(new BoxLayout(cardFee, BoxLayout.Y_AXIS));
+        cardFee.setLayout(new BorderLayout(12, 0));
+        JPanel feeTextBox = new JPanel();
+        feeTextBox.setLayout(new BoxLayout(feeTextBox, BoxLayout.Y_AXIS));
+        feeTextBox.setOpaque(false);
         JLabel fTitle = new JLabel("FEE PAYMENT STATUS");
         fTitle.setFont(UITheme.FONT_SMALL_BOLD);
         fTitle.setForeground(UITheme.TEXT_MUTED);
@@ -110,16 +118,21 @@ public class StudentDashboardPanel extends JPanel {
         feeSubLabel = new JLabel("-");
         feeSubLabel.setFont(UITheme.FONT_SMALL);
         feeSubLabel.setForeground(UITheme.TEXT_MUTED);
-        cardFee.add(fTitle);
-        cardFee.add(Box.createVerticalStrut(6));
-        cardFee.add(feeValLabel);
-        cardFee.add(Box.createVerticalStrut(4));
-        cardFee.add(feeSubLabel);
+        feeTextBox.add(fTitle);
+        feeTextBox.add(Box.createVerticalStrut(4));
+        feeTextBox.add(feeValLabel);
+        feeTextBox.add(Box.createVerticalStrut(2));
+        feeTextBox.add(feeSubLabel);
+        cardFee.add(feeTextBox, BorderLayout.CENTER);
+        cardFee.add(UITheme.createIconCircle(VectorIcon.Type.FEES, UITheme.SUCCESS, 42, 20), BorderLayout.EAST);
         cardsPanel.add(cardFee);
 
         // Complaints Card
         JPanel cardComp = UITheme.createCard();
-        cardComp.setLayout(new BoxLayout(cardComp, BoxLayout.Y_AXIS));
+        cardComp.setLayout(new BorderLayout(12, 0));
+        JPanel compTextBox = new JPanel();
+        compTextBox.setLayout(new BoxLayout(compTextBox, BoxLayout.Y_AXIS));
+        compTextBox.setOpaque(false);
         JLabel cTitle = new JLabel("MY COMPLAINTS");
         cTitle.setFont(UITheme.FONT_SMALL_BOLD);
         cTitle.setForeground(UITheme.TEXT_MUTED);
@@ -129,11 +142,13 @@ public class StudentDashboardPanel extends JPanel {
         complaintSubLabel = new JLabel("-");
         complaintSubLabel.setFont(UITheme.FONT_SMALL);
         complaintSubLabel.setForeground(UITheme.TEXT_MUTED);
-        cardComp.add(cTitle);
-        cardComp.add(Box.createVerticalStrut(6));
-        cardComp.add(complaintValLabel);
-        cardComp.add(Box.createVerticalStrut(4));
-        cardComp.add(complaintSubLabel);
+        compTextBox.add(cTitle);
+        compTextBox.add(Box.createVerticalStrut(4));
+        compTextBox.add(complaintValLabel);
+        compTextBox.add(Box.createVerticalStrut(2));
+        compTextBox.add(complaintSubLabel);
+        cardComp.add(compTextBox, BorderLayout.CENTER);
+        cardComp.add(UITheme.createIconCircle(VectorIcon.Type.COMPLAINTS, UITheme.WARNING, 42, 20), BorderLayout.EAST);
         cardsPanel.add(cardComp);
 
         topContainer.add(cardsPanel, BorderLayout.CENTER);
@@ -146,7 +161,9 @@ public class StudentDashboardPanel extends JPanel {
         // Left: Today's Food Menu Card
         JPanel menuCard = UITheme.createCard();
         menuCard.setLayout(new BorderLayout(0, 12));
-        JLabel menuHeader = new JLabel("🍽️ Today's Hostel Mess Menu");
+
+        JLabel menuHeader = new JLabel("Today's Hostel Mess Menu", new VectorIcon(VectorIcon.Type.FOOD_MENU, 18, UITheme.PRIMARY), SwingConstants.LEFT);
+        menuHeader.setIconTextGap(8);
         menuHeader.setFont(UITheme.FONT_SUBTITLE);
         menuHeader.setForeground(UITheme.TEXT_MAIN);
         menuCard.add(menuHeader, BorderLayout.NORTH);
@@ -156,7 +173,7 @@ public class StudentDashboardPanel extends JPanel {
         menuContainer.setBackground(UITheme.BG_CARD);
         menuCard.add(menuContainer, BorderLayout.CENTER);
 
-        JButton btnSubmitFeedback = UITheme.createSecondaryButton("⭐ Submit Meal Feedback");
+        JButton btnSubmitFeedback = UITheme.createSecondaryButton("Submit Meal Feedback", new VectorIcon(VectorIcon.Type.FOOD_FEEDBACK, 15, UITheme.TEXT_MAIN));
         btnSubmitFeedback.addActionListener(e -> onNavigate.accept("FOOD_FEEDBACK"));
         menuCard.add(btnSubmitFeedback, BorderLayout.SOUTH);
 
@@ -165,7 +182,9 @@ public class StudentDashboardPanel extends JPanel {
         // Right: Notifications & Quick Actions Card
         JPanel notifCard = UITheme.createCard();
         notifCard.setLayout(new BorderLayout(0, 12));
-        JLabel notifHeader = new JLabel("🔔 Announcements & Notices");
+
+        JLabel notifHeader = new JLabel("Announcements & Notices", new VectorIcon(VectorIcon.Type.INFO, 18, UITheme.INFO), SwingConstants.LEFT);
+        notifHeader.setIconTextGap(8);
         notifHeader.setFont(UITheme.FONT_SUBTITLE);
         notifHeader.setForeground(UITheme.TEXT_MAIN);
         notifCard.add(notifHeader, BorderLayout.NORTH);
@@ -177,7 +196,7 @@ public class StudentDashboardPanel extends JPanel {
         scrollNotif.setBorder(null);
         notifCard.add(scrollNotif, BorderLayout.CENTER);
 
-        JButton btnNewComplaint = UITheme.createPrimaryButton("+ Report Hostel Issue / Complaint");
+        JButton btnNewComplaint = UITheme.createPrimaryButton("Report Hostel Issue", new VectorIcon(VectorIcon.Type.ADD, 15, Color.WHITE));
         btnNewComplaint.addActionListener(e -> onNavigate.accept("COMPLAINTS"));
         notifCard.add(btnNewComplaint, BorderLayout.SOUTH);
 
@@ -215,7 +234,7 @@ public class StudentDashboardPanel extends JPanel {
                 List<Fee> fees = feeService.getFeesByStudent(studentId);
                 if (!fees.isEmpty()) {
                     Fee latest = fees.get(0);
-                    feeValLabel.setText("₹" + latest.getPendingAmount().toPlainString() + " Due");
+                    feeValLabel.setText(UITheme.formatCurrency(latest.getPendingAmount()) + " Due");
                     feeSubLabel.setText(latest.getSemester() + " - " + latest.getStatus());
                 } else {
                     feeValLabel.setText("No Invoices");
@@ -291,7 +310,8 @@ public class StudentDashboardPanel extends JPanel {
                     notifRow.setBackground(UITheme.BG_CARD);
                     notifRow.setBorder(new EmptyBorder(6, 4, 10, 4));
 
-                    JLabel titleLbl = new JLabel("• " + n.getTitle());
+                    JLabel titleLbl = new JLabel(n.getTitle(), new VectorIcon(VectorIcon.Type.CHECK, 12, UITheme.PRIMARY), SwingConstants.LEFT);
+                    titleLbl.setIconTextGap(6);
                     titleLbl.setFont(UITheme.FONT_BODY_BOLD);
                     titleLbl.setForeground(UITheme.TEXT_MAIN);
 

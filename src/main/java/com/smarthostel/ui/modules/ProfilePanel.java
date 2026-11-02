@@ -5,6 +5,7 @@ import com.smarthostel.dao.UserDAO;
 import com.smarthostel.model.Student;
 import com.smarthostel.model.User;
 import com.smarthostel.service.AuthService;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.UITheme;
 import com.smarthostel.util.ValidationUtil;
 
@@ -47,7 +48,8 @@ public class ProfilePanel extends JPanel {
         JPanel profileCard = UITheme.createCard();
         profileCard.setLayout(new BorderLayout(0, 16));
 
-        JLabel pHeader = new JLabel("👤 Account Profile Information");
+        JLabel pHeader = new JLabel("Account Profile Information", new VectorIcon(VectorIcon.Type.PROFILE, 20, UITheme.PRIMARY), SwingConstants.LEFT);
+        pHeader.setIconTextGap(8);
         pHeader.setFont(UITheme.FONT_SUBTITLE);
         pHeader.setForeground(UITheme.TEXT_MAIN);
         profileCard.add(pHeader, BorderLayout.NORTH);
@@ -100,7 +102,7 @@ public class ProfilePanel extends JPanel {
         JPanel pBtnRow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         pBtnRow.setBackground(UITheme.BG_CARD);
 
-        JButton saveProfileBtn = UITheme.createPrimaryButton("Save Profile Details");
+        JButton saveProfileBtn = UITheme.createPrimaryButton("Save Profile Details", new VectorIcon(VectorIcon.Type.EDIT, 14, Color.WHITE));
         saveProfileBtn.addActionListener(e -> updateProfile());
         pBtnRow.add(saveProfileBtn);
 
@@ -111,7 +113,8 @@ public class ProfilePanel extends JPanel {
         JPanel passCard = UITheme.createCard();
         passCard.setLayout(new BorderLayout(0, 16));
 
-        JLabel passHeader = new JLabel("🔒 Change Account Password");
+        JLabel passHeader = new JLabel("Change Account Password", new VectorIcon(VectorIcon.Type.LOCK, 20, UITheme.PRIMARY), SwingConstants.LEFT);
+        passHeader.setIconTextGap(8);
         passHeader.setFont(UITheme.FONT_SUBTITLE);
         passHeader.setForeground(UITheme.TEXT_MAIN);
         passCard.add(passHeader, BorderLayout.NORTH);
@@ -138,7 +141,7 @@ public class ProfilePanel extends JPanel {
         JPanel passBtnRow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         passBtnRow.setBackground(UITheme.BG_CARD);
 
-        JButton updatePassBtn = UITheme.createPrimaryButton("Update Password");
+        JButton updatePassBtn = UITheme.createPrimaryButton("Update Password", new VectorIcon(VectorIcon.Type.LOCK, 14, Color.WHITE));
         updatePassBtn.addActionListener(e -> changePassword());
         passBtnRow.add(updatePassBtn);
 
@@ -155,7 +158,7 @@ public class ProfilePanel extends JPanel {
         logoutNote.setFont(UITheme.FONT_BODY);
         logoutNote.setForeground(UITheme.TEXT_MUTED);
 
-        JButton logoutBtn = UITheme.createDangerButton("🚪 Sign Out of Desktop Application");
+        JButton logoutBtn = UITheme.createDangerButton("Sign Out of Desktop Application", new VectorIcon(VectorIcon.Type.LOGOUT, 14, Color.WHITE));
         logoutBtn.addActionListener(e -> {
             int c = JOptionPane.showConfirmDialog(this, "Are you sure you want to log out?", "Confirm", JOptionPane.YES_NO_OPTION);
             if (c == JOptionPane.YES_OPTION) {

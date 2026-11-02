@@ -4,6 +4,7 @@ import com.smarthostel.config.SessionManager;
 import com.smarthostel.model.FoodMenu;
 import com.smarthostel.service.FoodService;
 import com.smarthostel.ui.components.ModernTable;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
 
@@ -50,7 +51,7 @@ public class FoodMenuPanel extends JPanel {
         viewFilterBox.addActionListener(e -> loadMenu());
         filterPanel.add(viewFilterBox);
 
-        JButton btnRefresh = UITheme.createSecondaryButton("🔄 Refresh");
+        JButton btnRefresh = UITheme.createSecondaryButton("Refresh", new VectorIcon(VectorIcon.Type.REFRESH, 14, UITheme.TEXT_MAIN));
         btnRefresh.addActionListener(e -> loadMenu());
         filterPanel.add(btnRefresh);
 
@@ -61,11 +62,11 @@ public class FoodMenuPanel extends JPanel {
             JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
             actionPanel.setBackground(UITheme.BG_CARD);
 
-            JButton btnAdd = UITheme.createPrimaryButton("+ Add / Update Menu");
+            JButton btnAdd = UITheme.createPrimaryButton("Add Menu Item", new VectorIcon(VectorIcon.Type.ADD, 14, Color.WHITE));
             btnAdd.addActionListener(e -> showMenuDialog());
             actionPanel.add(btnAdd);
 
-            JButton btnDelete = UITheme.createDangerButton("🗑️ Delete");
+            JButton btnDelete = UITheme.createDangerButton("Delete", new VectorIcon(VectorIcon.Type.DELETE, 14, Color.WHITE));
             btnDelete.addActionListener(e -> deleteSelectedMenu());
             actionPanel.add(btnDelete);
 

@@ -7,6 +7,7 @@ import com.smarthostel.model.Student;
 import com.smarthostel.service.FeeService;
 import com.smarthostel.service.StudentService;
 import com.smarthostel.ui.components.ModernTable;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
 import com.smarthostel.util.ValidationUtil;
@@ -60,15 +61,15 @@ public class FeeManagementPanel extends JPanel {
             JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
             actionPanel.setBackground(UITheme.BG_CARD);
 
-            JButton btnCreateFee = UITheme.createSecondaryButton("+ Generate Fee Invoice");
+            JButton btnCreateFee = UITheme.createSecondaryButton("Generate Fee Invoice", new VectorIcon(VectorIcon.Type.ADD, 14, UITheme.TEXT_MAIN));
             btnCreateFee.addActionListener(e -> showCreateFeeDialog());
             actionPanel.add(btnCreateFee);
 
-            JButton btnCollect = UITheme.createPrimaryButton("💳 Record Payment");
+            JButton btnCollect = UITheme.createPrimaryButton("Record Payment", new VectorIcon(VectorIcon.Type.FEES, 14, Color.WHITE));
             btnCollect.addActionListener(e -> showRecordPaymentDialog());
             actionPanel.add(btnCollect);
 
-            JButton btnReceipt = UITheme.createSecondaryButton("🧾 View Receipt");
+            JButton btnReceipt = UITheme.createSecondaryButton("View Receipt", new VectorIcon(VectorIcon.Type.PRINT_PDF, 14, UITheme.TEXT_MAIN));
             btnReceipt.addActionListener(e -> viewSelectedReceipt());
             actionPanel.add(btnReceipt);
 
@@ -77,7 +78,7 @@ public class FeeManagementPanel extends JPanel {
             JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
             actionPanel.setBackground(UITheme.BG_CARD);
 
-            JButton btnReceipt = UITheme.createSecondaryButton("🧾 View Receipt");
+            JButton btnReceipt = UITheme.createSecondaryButton("View Receipt", new VectorIcon(VectorIcon.Type.PRINT_PDF, 14, UITheme.TEXT_MAIN));
             btnReceipt.addActionListener(e -> viewSelectedReceipt());
             actionPanel.add(btnReceipt);
 
@@ -101,7 +102,7 @@ public class FeeManagementPanel extends JPanel {
         };
         feesTable = new ModernTable(feesTableModel);
         feesTab.add(new JScrollPane(feesTable), BorderLayout.CENTER);
-        tabbedPane.addTab("📄 Invoiced Fees", feesTab);
+        tabbedPane.addTab("Invoiced Fees", new VectorIcon(VectorIcon.Type.FEES, 15, UITheme.PRIMARY), feesTab);
 
         // Tab 2: Payments History
         JPanel paymentsTab = new JPanel(new BorderLayout(0, 10));
@@ -114,7 +115,7 @@ public class FeeManagementPanel extends JPanel {
         };
         paymentsTable = new ModernTable(paymentsTableModel);
         paymentsTab.add(new JScrollPane(paymentsTable), BorderLayout.CENTER);
-        tabbedPane.addTab("🧾 Payment History & Receipts", paymentsTab);
+        tabbedPane.addTab("Payment History & Receipts", new VectorIcon(VectorIcon.Type.REPORTS, 15, UITheme.PRIMARY), paymentsTab);
 
         add(tabbedPane, BorderLayout.CENTER);
     }
@@ -142,9 +143,9 @@ public class FeeManagementPanel extends JPanel {
                         f.getAcademicYear(),
                         f.getSemester(),
                         f.getFeeType(),
-                        "₹" + f.getTotalAmount().toPlainString(),
-                        "₹" + f.getPaidAmount().toPlainString(),
-                        "₹" + f.getPendingAmount().toPlainString(),
+                        UITheme.formatCurrency(f.getTotalAmount()),
+                        UITheme.formatCurrency(f.getPaidAmount()),
+                        UITheme.formatCurrency(f.getPendingAmount()),
                         DateUtil.format(f.getDueDate()),
                         f.getStatus()
                 });
@@ -158,7 +159,7 @@ public class FeeManagementPanel extends JPanel {
                         p.getStudentName(),
                         p.getRegisterNumber(),
                         p.getFeeSemester(),
-                        "₹" + p.getAmountPaid().toPlainString(),
+                        UITheme.formatCurrency(p.getAmountPaid()),
                         DateUtil.format(p.getPaymentDate()),
                         p.getPaymentMethod(),
                         p.getTransactionId() != null ? p.getTransactionId() : "-",
@@ -209,7 +210,7 @@ public class FeeManagementPanel extends JPanel {
         form.add(semBox);
         form.add(new JLabel("Fee Type: *"));
         form.add(typeField);
-        form.add(new JLabel("Total Fee Amount (₹): *"));
+        form.add(new JLabel("Total Fee Amount (" + UITheme.CURRENCY_SYMBOL + "): *"));
         form.add(amountField);
         form.add(new JLabel("Due Date (YYYY-MM-DD): *"));
         form.add(dueField);
@@ -294,7 +295,7 @@ public class FeeManagementPanel extends JPanel {
         feeBox.addActionListener(e -> {
             Fee f = (Fee) feeBox.getSelectedItem();
             if (f != null) {
-                pendingLbl.setText("Pending: ₹" + f.getPendingAmount().toPlainString());
+                pendingLbl.setText("Pending: " + UITheme.formatCurrency(f.getPendingAmount()));
                 amountField.setText(f.getPendingAmount().toPlainString());
             }
         });
@@ -305,7 +306,7 @@ public class FeeManagementPanel extends JPanel {
         form.add(feeBox);
         form.add(new JLabel("Outstanding Dues:"));
         form.add(pendingLbl);
-        form.add(new JLabel("Payment Amount (₹): *"));
+        form.add(new JLabel("Payment Amount (" + UITheme.CURRENCY_SYMBOL + "): *"));
         form.add(amountField);
         form.add(new JLabel("Payment Method: *"));
         form.add(methodBox);
@@ -351,12 +352,12 @@ public class FeeManagementPanel extends JPanel {
                 feeService.recordPayment(payment);
 
                 JOptionPane.showMessageDialog(dialog,
-                        "Payment of ₹" + amount + " successfully verified!\nReceipt Number: " + payment.getReceiptNumber(),
+                        "Payment of " + UITheme.formatCurrency(amount) + " successfully verified!\nReceipt Number: " + payment.getReceiptNumber(),
                         "Payment Receipt Generated", JOptionPane.INFORMATION_MESSAGE);
 
                 dialog.dispose();
                 loadData();
-                tabbedPane.setSelectedIndex(1); // Switch to payments history tab
+                tabbedPane.setSelectedIndex(1);
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(dialog, ex.getMessage(), "Payment Error", JOptionPane.ERROR_MESSAGE);

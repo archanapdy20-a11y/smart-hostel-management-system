@@ -9,6 +9,7 @@ import com.smarthostel.model.AuditLog;
 import com.smarthostel.service.AuditService;
 import com.smarthostel.ui.components.ModernTable;
 import com.smarthostel.ui.components.StatCard;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
 
@@ -16,7 +17,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -47,14 +47,14 @@ public class AdminDashboardPanel extends JPanel {
     }
 
     private void initUI() {
-        // Top: 4 Key Metric Stat Cards
+        // Top: 4 Key Metric Stat Cards with vector icons
         JPanel statsPanel = new JPanel(new GridLayout(1, 4, 16, 0));
         statsPanel.setBackground(UITheme.BG_MAIN);
 
-        cardStudents = new StatCard("Total Students", "0", "Enrolled Residents", UITheme.PRIMARY);
-        cardRooms = new StatCard("Hostel Capacity", "0 / 0", "Occupied / Total Beds", UITheme.INFO);
-        cardFees = new StatCard("Fee Collection", "₹0", "Pending: ₹0", UITheme.SUCCESS);
-        cardComplaints = new StatCard("Open Complaints", "0", "Requires Attention", UITheme.DANGER);
+        cardStudents = new StatCard("Total Students", "0", "Enrolled Residents", UITheme.PRIMARY, VectorIcon.Type.STUDENTS);
+        cardRooms = new StatCard("Hostel Capacity", "0 / 0", "Occupied / Total Beds", UITheme.INFO, VectorIcon.Type.ROOMS);
+        cardFees = new StatCard("Fee Collection", UITheme.formatCurrency(null), "Pending Dues", UITheme.SUCCESS, VectorIcon.Type.FEES);
+        cardComplaints = new StatCard("Open Complaints", "0", "Requires Attention", UITheme.DANGER, VectorIcon.Type.COMPLAINTS);
 
         statsPanel.add(cardStudents);
         statsPanel.add(cardRooms);
@@ -76,19 +76,19 @@ public class AdminDashboardPanel extends JPanel {
         actionLabel.setForeground(UITheme.TEXT_MAIN);
         actionsCard.add(actionLabel);
 
-        JButton btnAddStudent = UITheme.createPrimaryButton("+ Register Student");
+        JButton btnAddStudent = UITheme.createPrimaryButton("Register Student", new VectorIcon(VectorIcon.Type.ADD, 15, Color.WHITE));
         btnAddStudent.addActionListener(e -> onNavigate.accept("STUDENTS"));
         actionsCard.add(btnAddStudent);
 
-        JButton btnAllocate = UITheme.createSecondaryButton("🔑 Allocate Room");
+        JButton btnAllocate = UITheme.createSecondaryButton("Allocate Room", new VectorIcon(VectorIcon.Type.ALLOCATION, 15, UITheme.TEXT_MAIN));
         btnAllocate.addActionListener(e -> onNavigate.accept("ALLOCATION"));
         actionsCard.add(btnAllocate);
 
-        JButton btnFees = UITheme.createSecondaryButton("💳 Record Fee Payment");
+        JButton btnFees = UITheme.createSecondaryButton("Record Fee Payment", new VectorIcon(VectorIcon.Type.FEES, 15, UITheme.TEXT_MAIN));
         btnFees.addActionListener(e -> onNavigate.accept("FEES"));
         actionsCard.add(btnFees);
 
-        JButton btnComplaints = UITheme.createSecondaryButton("🚨 View Complaints");
+        JButton btnComplaints = UITheme.createSecondaryButton("View Complaints", new VectorIcon(VectorIcon.Type.COMPLAINTS, 15, UITheme.TEXT_MAIN));
         btnComplaints.addActionListener(e -> onNavigate.accept("COMPLAINTS"));
         actionsCard.add(btnComplaints);
 
@@ -126,8 +126,8 @@ public class AdminDashboardPanel extends JPanel {
             cardRooms.setSubtitle("Available Beds: " + rStats.availableBeds);
 
             FeeDAO.FeeSummary fStats = feeDAO.getFeeSummary();
-            cardFees.setValue("₹" + fStats.collectedFees.toPlainString());
-            cardFees.setSubtitle("Pending: ₹" + fStats.pendingFees.toPlainString());
+            cardFees.setValue(UITheme.formatCurrency(fStats.collectedFees));
+            cardFees.setSubtitle("Pending: " + UITheme.formatCurrency(fStats.pendingFees));
 
             ComplaintDAO.ComplaintSummary cStats = complaintDAO.getComplaintSummary();
             cardComplaints.setValue(String.valueOf(cStats.pending + cStats.inProgress));

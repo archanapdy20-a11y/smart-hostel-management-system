@@ -5,6 +5,7 @@ import com.smarthostel.model.Payment;
 import com.smarthostel.service.FeeService;
 import com.smarthostel.ui.components.ModernTable;
 import com.smarthostel.ui.components.StatCard;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
 
@@ -38,14 +39,14 @@ public class AccountantDashboardPanel extends JPanel {
     }
 
     private void initUI() {
-        // Top 4 Finance Stat Cards
+        // Top 4 Finance Stat Cards with vector badges
         JPanel statsPanel = new JPanel(new GridLayout(1, 4, 16, 0));
         statsPanel.setBackground(UITheme.BG_MAIN);
 
-        cardTotalFees = new StatCard("Total Invoiced", "₹0", "All Academic Fees", UITheme.PRIMARY);
-        cardCollected = new StatCard("Collected Revenue", "₹0", "Verified Receipts", UITheme.SUCCESS);
-        cardPending = new StatCard("Pending Dues", "₹0", "Unpaid / Outstanding", UITheme.DANGER);
-        cardRecentCount = new StatCard("Recent Transactions", "0", "Completed Transactions", UITheme.INFO);
+        cardTotalFees = new StatCard("Total Invoiced", UITheme.formatCurrency(null), "All Academic Fees", UITheme.PRIMARY, VectorIcon.Type.FEES);
+        cardCollected = new StatCard("Collected Revenue", UITheme.formatCurrency(null), "Verified Receipts", UITheme.SUCCESS, VectorIcon.Type.CHECK);
+        cardPending = new StatCard("Pending Dues", UITheme.formatCurrency(null), "Unpaid Outstanding", UITheme.DANGER, VectorIcon.Type.COMPLAINTS);
+        cardRecentCount = new StatCard("Recent Payments", "0", "Verified Receipts", UITheme.INFO, VectorIcon.Type.REPORTS);
 
         statsPanel.add(cardTotalFees);
         statsPanel.add(cardCollected);
@@ -66,15 +67,15 @@ public class AccountantDashboardPanel extends JPanel {
         actionLabel.setForeground(UITheme.TEXT_MAIN);
         actionsCard.add(actionLabel);
 
-        JButton btnRecord = UITheme.createPrimaryButton("+ Record Fee Payment");
+        JButton btnRecord = UITheme.createPrimaryButton("Record Fee Payment", new VectorIcon(VectorIcon.Type.ADD, 15, Color.WHITE));
         btnRecord.addActionListener(e -> onNavigate.accept("FEES"));
         actionsCard.add(btnRecord);
 
-        JButton btnStudents = UITheme.createSecondaryButton("👥 Resident Dues List");
+        JButton btnStudents = UITheme.createSecondaryButton("Resident Dues List", new VectorIcon(VectorIcon.Type.STUDENTS, 15, UITheme.TEXT_MAIN));
         btnStudents.addActionListener(e -> onNavigate.accept("STUDENTS"));
         actionsCard.add(btnStudents);
 
-        JButton btnReports = UITheme.createSecondaryButton("📈 Export Fee Reports");
+        JButton btnReports = UITheme.createSecondaryButton("Export Fee Reports", new VectorIcon(VectorIcon.Type.EXPORT_CSV, 15, UITheme.TEXT_MAIN));
         btnReports.addActionListener(e -> onNavigate.accept("REPORTS"));
         actionsCard.add(btnReports);
 
@@ -105,9 +106,9 @@ public class AccountantDashboardPanel extends JPanel {
     public void loadData() {
         try {
             FeeDAO.FeeSummary summary = feeService.getFeeSummary();
-            cardTotalFees.setValue("₹" + summary.totalFees.toPlainString());
-            cardCollected.setValue("₹" + summary.collectedFees.toPlainString());
-            cardPending.setValue("₹" + summary.pendingFees.toPlainString());
+            cardTotalFees.setValue(UITheme.formatCurrency(summary.totalFees));
+            cardCollected.setValue(UITheme.formatCurrency(summary.collectedFees));
+            cardPending.setValue(UITheme.formatCurrency(summary.pendingFees));
 
             List<Payment> recent = feeService.getRecentPayments(20);
             cardRecentCount.setValue(String.valueOf(recent.size()));
@@ -119,7 +120,7 @@ public class AccountantDashboardPanel extends JPanel {
                         p.getStudentName(),
                         p.getRegisterNumber(),
                         p.getFeeSemester(),
-                        "₹" + p.getAmountPaid().toPlainString(),
+                        UITheme.formatCurrency(p.getAmountPaid()),
                         p.getPaymentMethod(),
                         p.getTransactionId() != null ? p.getTransactionId() : "-",
                         DateUtil.format(p.getPaymentDate()),

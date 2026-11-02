@@ -3,6 +3,7 @@ package com.smarthostel.ui.modules;
 import com.smarthostel.model.*;
 import com.smarthostel.service.ReportService;
 import com.smarthostel.ui.components.ModernTable;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
 
@@ -41,7 +42,6 @@ public class ReportsPanel extends JPanel {
     }
 
     private void initUI() {
-        // Container for Top Toolbars
         JPanel topContainer = new JPanel();
         topContainer.setLayout(new BoxLayout(topContainer, BoxLayout.Y_AXIS));
         topContainer.setBackground(UITheme.BG_MAIN);
@@ -71,7 +71,7 @@ public class ReportsPanel extends JPanel {
         reportCategoryBox.addActionListener(e -> generateReport());
         leftPanel.add(reportCategoryBox);
 
-        JButton btnGenerate = UITheme.createSecondaryButton("🔄 Refresh");
+        JButton btnGenerate = UITheme.createSecondaryButton("Refresh", new VectorIcon(VectorIcon.Type.REFRESH, 14, UITheme.TEXT_MAIN));
         btnGenerate.addActionListener(e -> generateReport());
         leftPanel.add(btnGenerate);
 
@@ -81,11 +81,11 @@ public class ReportsPanel extends JPanel {
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         rightPanel.setBackground(UITheme.BG_CARD);
 
-        JButton btnExportCSV = UITheme.createPrimaryButton("📥 Export to CSV");
+        JButton btnExportCSV = UITheme.createPrimaryButton("Export to CSV", new VectorIcon(VectorIcon.Type.EXPORT_CSV, 14, Color.WHITE));
         btnExportCSV.addActionListener(e -> exportCSV());
         rightPanel.add(btnExportCSV);
 
-        JButton btnPrint = UITheme.createSecondaryButton("📄 Export to PDF / Print");
+        JButton btnPrint = UITheme.createSecondaryButton("Export to PDF / Print", new VectorIcon(VectorIcon.Type.PRINT_PDF, 14, UITheme.TEXT_MAIN));
         btnPrint.addActionListener(e -> printReport());
         rightPanel.add(btnPrint);
 
@@ -97,7 +97,8 @@ public class ReportsPanel extends JPanel {
         JPanel filterCard = UITheme.createCard();
         filterCard.setLayout(new FlowLayout(FlowLayout.LEFT, 14, 0));
 
-        JLabel searchLbl = new JLabel("🔍 Quick Filter / Search:");
+        JLabel searchLbl = new JLabel("Quick Search:", new VectorIcon(VectorIcon.Type.SEARCH, 14, UITheme.TEXT_MAIN), SwingConstants.LEFT);
+        searchLbl.setIconTextGap(6);
         searchLbl.setFont(UITheme.FONT_BODY_BOLD);
         filterCard.add(searchLbl);
 
@@ -129,11 +130,11 @@ public class ReportsPanel extends JPanel {
         toDateField.putClientProperty("JTextField.placeholderText", "YYYY-MM-DD");
         filterCard.add(toDateField);
 
-        JButton btnFilterDate = UITheme.createSecondaryButton("Apply Date Filter");
+        JButton btnFilterDate = UITheme.createSecondaryButton("Apply Date Filter", new VectorIcon(VectorIcon.Type.CALENDAR, 14, UITheme.TEXT_MAIN));
         btnFilterDate.addActionListener(e -> generateReport());
         filterCard.add(btnFilterDate);
 
-        JButton btnClearFilter = UITheme.createSecondaryButton("Clear Filters");
+        JButton btnClearFilter = UITheme.createSecondaryButton("Clear Filters", new VectorIcon(VectorIcon.Type.REFRESH, 14, UITheme.TEXT_MAIN));
         btnClearFilter.addActionListener(e -> {
             searchField.setText("");
             fromDateField.setText("");
@@ -249,7 +250,7 @@ public class ReportsPanel extends JPanel {
             tableModel.addRow(new Object[]{
                     r.getRoomNumber(), r.getBlockName(), "Floor " + r.getFloorNumber(),
                     r.getRoomType(), r.getTotalCapacity(), r.getOccupiedCapacity(),
-                    r.getAvailableBeds(), "₹" + r.getMonthlyRent().toPlainString(), r.getStatus()
+                    r.getAvailableBeds(), UITheme.formatCurrency(r.getMonthlyRent()), r.getStatus()
             });
         }
         reportSummaryLabel.setText("Available Rooms (" + list.size() + " Rooms | " + totalAvailable + " Available Beds)");
@@ -284,8 +285,8 @@ public class ReportsPanel extends JPanel {
                 count++;
                 tableModel.addRow(new Object[]{
                         f.getFeeId(), f.getStudentName(), f.getRegisterNumber(),
-                        f.getSemester(), f.getFeeType(), "₹" + f.getTotalAmount().toPlainString(),
-                        "₹" + f.getPaidAmount().toPlainString(), "₹" + f.getPendingAmount().toPlainString(),
+                        f.getSemester(), f.getFeeType(), UITheme.formatCurrency(f.getTotalAmount()),
+                        UITheme.formatCurrency(f.getPaidAmount()), UITheme.formatCurrency(f.getPendingAmount()),
                         DateUtil.format(f.getDueDate()), f.getStatus()
                 });
             }
@@ -303,8 +304,8 @@ public class ReportsPanel extends JPanel {
                 count++;
                 tableModel.addRow(new Object[]{
                         f.getFeeId(), f.getStudentName(), f.getRegisterNumber(),
-                        f.getSemester(), "₹" + f.getTotalAmount().toPlainString(),
-                        "₹" + f.getPaidAmount().toPlainString(), "₹" + f.getPendingAmount().toPlainString(),
+                        f.getSemester(), UITheme.formatCurrency(f.getTotalAmount()),
+                        UITheme.formatCurrency(f.getPaidAmount()), UITheme.formatCurrency(f.getPendingAmount()),
                         DateUtil.format(f.getDueDate()), f.getStatus()
                 });
             }
@@ -322,7 +323,7 @@ public class ReportsPanel extends JPanel {
                 count++;
                 tableModel.addRow(new Object[]{
                         p.getReceiptNumber(), p.getStudentName(), p.getRegisterNumber(),
-                        p.getFeeSemester(), "₹" + p.getAmountPaid().toPlainString(),
+                        p.getFeeSemester(), UITheme.formatCurrency(p.getAmountPaid()),
                         DateUtil.format(p.getPaymentDate()), p.getPaymentMethod(),
                         p.getTransactionId() != null ? p.getTransactionId() : "-",
                         p.getRecordedByName() != null ? p.getRecordedByName() : "Staff"

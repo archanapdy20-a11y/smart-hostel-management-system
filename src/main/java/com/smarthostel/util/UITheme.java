@@ -1,22 +1,24 @@
 package com.smarthostel.util;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import com.smarthostel.ui.components.VectorIcon;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.math.BigDecimal;
 
 public class UITheme {
 
     // Modern Enterprise Palette
     public static final Color PRIMARY = new Color(79, 70, 229);        // Indigo-600
     public static final Color PRIMARY_HOVER = new Color(67, 56, 202);  // Indigo-700
-    public static final Color PRIMARY_DARK = new Color(30, 27, 75);    // Indigo-950 (Sidebar)
+    public static final Color PRIMARY_DARK = new Color(15, 23, 42);    // Slate-900 (Deep Sidebar)
     public static final Color PRIMARY_LIGHT = new Color(238, 242, 255); // Indigo-50
-    public static final Color SIDEBAR_HOVER = new Color(49, 46, 129);  // Indigo-900
+    public static final Color SIDEBAR_HOVER = new Color(30, 41, 59);   // Slate-800
+    public static final Color SIDEBAR_ACTIVE = new Color(79, 70, 229); // Indigo-600
 
     public static final Color BG_MAIN = new Color(248, 250, 252);      // Slate-50
     public static final Color BG_CARD = Color.WHITE;
@@ -38,7 +40,7 @@ public class UITheme {
     public static final Color INFO = new Color(59, 130, 246);          // Blue-500
     public static final Color INFO_BG = new Color(239, 246, 255);
 
-    // Font family definition
+    // Font definitions
     private static final String FONT_NAME = "Segoe UI";
 
     public static final Font FONT_TITLE = new Font(FONT_NAME, Font.BOLD, 22);
@@ -49,7 +51,10 @@ public class UITheme {
     public static final Font FONT_SMALL = new Font(FONT_NAME, Font.PLAIN, 11);
     public static final Font FONT_SMALL_BOLD = new Font(FONT_NAME, Font.BOLD, 11);
 
-    // Initializes FlatLaf Look and Feel with enterprise customization
+    // Currency symbol safely encoded
+    public static final String CURRENCY_SYMBOL = "\u20B9";
+
+    // Sets up modern FlatLaf UI properties
     public static void setupFlatLaf() {
         try {
             FlatLightLaf.setup();
@@ -60,22 +65,34 @@ public class UITheme {
             UIManager.put("ScrollBar.width", 10);
             UIManager.put("Table.selectionBackground", PRIMARY_LIGHT);
             UIManager.put("Table.selectionForeground", PRIMARY_DARK);
-            UIManager.put("Table.rowHeight", 34);
+            UIManager.put("Table.rowHeight", 36);
         } catch (Exception e) {
-            System.err.println("Could not initialize FlatLaf. Using system Look & Feel: " + e.getMessage());
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (Exception ignored) {}
         }
     }
 
+    public static String formatCurrency(BigDecimal amount) {
+        if (amount == null) return CURRENCY_SYMBOL + " 0.00";
+        return CURRENCY_SYMBOL + " " + String.format("%,.2f", amount.doubleValue());
+    }
+
     public static JButton createPrimaryButton(String text) {
+        return createPrimaryButton(text, null);
+    }
+
+    public static JButton createPrimaryButton(String text, Icon icon) {
         JButton btn = new JButton(text);
+        if (icon != null) {
+            btn.setIcon(icon);
+            btn.setIconTextGap(8);
+        }
         btn.setFont(FONT_BODY_BOLD);
         btn.setBackground(PRIMARY);
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
-        btn.setBorder(new EmptyBorder(10, 18, 10, 18));
+        btn.setBorder(new EmptyBorder(9, 16, 9, 16));
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -89,12 +106,20 @@ public class UITheme {
     }
 
     public static JButton createSecondaryButton(String text) {
+        return createSecondaryButton(text, null);
+    }
+
+    public static JButton createSecondaryButton(String text, Icon icon) {
         JButton btn = new JButton(text);
+        if (icon != null) {
+            btn.setIcon(icon);
+            btn.setIconTextGap(8);
+        }
         btn.setFont(FONT_BODY_BOLD);
         btn.setBackground(BG_CARD);
         btn.setForeground(TEXT_MAIN);
         btn.setFocusPainted(false);
-        btn.setBorder(new CompoundBorder(new LineBorder(BORDER, 1), new EmptyBorder(9, 16, 9, 16)));
+        btn.setBorder(new CompoundBorder(new LineBorder(BORDER, 1), new EmptyBorder(8, 14, 8, 14)));
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -108,12 +133,35 @@ public class UITheme {
     }
 
     public static JButton createDangerButton(String text) {
+        return createDangerButton(text, null);
+    }
+
+    public static JButton createDangerButton(String text, Icon icon) {
         JButton btn = new JButton(text);
+        if (icon != null) {
+            btn.setIcon(icon);
+            btn.setIconTextGap(8);
+        }
         btn.setFont(FONT_BODY_BOLD);
         btn.setBackground(DANGER);
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
-        btn.setBorder(new EmptyBorder(10, 16, 10, 16));
+        btn.setBorder(new EmptyBorder(9, 16, 9, 16));
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return btn;
+    }
+
+    public static JButton createSuccessButton(String text, Icon icon) {
+        JButton btn = new JButton(text);
+        if (icon != null) {
+            btn.setIcon(icon);
+            btn.setIconTextGap(8);
+        }
+        btn.setFont(FONT_BODY_BOLD);
+        btn.setBackground(SUCCESS);
+        btn.setForeground(Color.WHITE);
+        btn.setFocusPainted(false);
+        btn.setBorder(new EmptyBorder(9, 16, 9, 16));
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return btn;
     }
@@ -140,7 +188,7 @@ public class UITheme {
     }
 
     public static JPanel createBadge(String text, Color bg, Color fg) {
-        JPanel badge = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 4));
+        JPanel badge = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 3));
         badge.setBackground(bg);
         badge.setBorder(new LineBorder(new Color(bg.getRed(), bg.getGreen(), bg.getBlue(), 120), 1, true));
         JLabel label = new JLabel(text);
@@ -148,5 +196,29 @@ public class UITheme {
         label.setForeground(fg);
         badge.add(label);
         return badge;
+    }
+
+    // Creates an icon badge with tinted circular background
+    public static JComponent createIconCircle(VectorIcon.Type iconType, Color accentColor, int circleSize, int iconSize) {
+        JPanel circle = new JPanel(new GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                Color tint = new Color(accentColor.getRed(), accentColor.getGreen(), accentColor.getBlue(), 30);
+                g2.setColor(tint);
+                g2.fillOval(0, 0, getWidth(), getHeight());
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        circle.setOpaque(false);
+        circle.setPreferredSize(new Dimension(circleSize, circleSize));
+        circle.setMaximumSize(new Dimension(circleSize, circleSize));
+        circle.setMinimumSize(new Dimension(circleSize, circleSize));
+
+        JLabel iconLabel = new JLabel(new VectorIcon(iconType, iconSize, accentColor));
+        circle.add(iconLabel);
+        return circle;
     }
 }

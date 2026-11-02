@@ -5,6 +5,7 @@ import com.smarthostel.model.Role;
 import com.smarthostel.model.User;
 import com.smarthostel.service.UserService;
 import com.smarthostel.ui.components.ModernTable;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
 
@@ -55,11 +56,11 @@ public class UserManagementPanel extends JPanel {
         searchField.addActionListener(e -> searchUsers());
         filterPanel.add(searchField);
 
-        JButton btnSearch = UITheme.createSecondaryButton("Search");
+        JButton btnSearch = UITheme.createSecondaryButton("Search", new VectorIcon(VectorIcon.Type.SEARCH, 14, UITheme.TEXT_MAIN));
         btnSearch.addActionListener(e -> searchUsers());
         filterPanel.add(btnSearch);
 
-        JButton btnReset = UITheme.createSecondaryButton("Reset");
+        JButton btnReset = UITheme.createSecondaryButton("Reset", new VectorIcon(VectorIcon.Type.REFRESH, 14, UITheme.TEXT_MAIN));
         btnReset.addActionListener(e -> {
             searchField.setText("");
             roleFilterBox.setSelectedIndex(0);
@@ -73,19 +74,19 @@ public class UserManagementPanel extends JPanel {
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         actionPanel.setBackground(UITheme.BG_CARD);
 
-        JButton btnAdd = UITheme.createPrimaryButton("+ Add Staff Account");
+        JButton btnAdd = UITheme.createPrimaryButton("Add Staff Account", new VectorIcon(VectorIcon.Type.ADD, 14, Color.WHITE));
         btnAdd.addActionListener(e -> showAddStaffDialog());
         actionPanel.add(btnAdd);
 
-        JButton btnEdit = UITheme.createSecondaryButton("✏️ Edit User");
+        JButton btnEdit = UITheme.createSecondaryButton("Edit User", new VectorIcon(VectorIcon.Type.EDIT, 14, UITheme.TEXT_MAIN));
         btnEdit.addActionListener(e -> editSelectedUser());
         actionPanel.add(btnEdit);
 
-        JButton btnResetPass = UITheme.createSecondaryButton("🔑 Reset Password");
+        JButton btnResetPass = UITheme.createSecondaryButton("Reset Password", new VectorIcon(VectorIcon.Type.LOCK, 14, UITheme.TEXT_MAIN));
         btnResetPass.addActionListener(e -> resetSelectedUserPassword());
         actionPanel.add(btnResetPass);
 
-        JButton btnDelete = UITheme.createDangerButton("🗑️ Delete Account");
+        JButton btnDelete = UITheme.createDangerButton("Delete Account", new VectorIcon(VectorIcon.Type.DELETE, 14, Color.WHITE));
         btnDelete.addActionListener(e -> deleteSelectedUser());
         actionPanel.add(btnDelete);
 
@@ -378,4 +379,3 @@ public class UserManagementPanel extends JPanel {
         }
     }
 }
-

@@ -8,6 +8,7 @@ import com.smarthostel.service.AllocationService;
 import com.smarthostel.service.RoomService;
 import com.smarthostel.service.StudentService;
 import com.smarthostel.ui.components.ModernTable;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
 
@@ -61,11 +62,11 @@ public class RoomAllocationPanel extends JPanel {
         searchField.addActionListener(e -> searchAllocations());
         filterPanel.add(searchField);
 
-        JButton btnSearch = UITheme.createSecondaryButton("Search");
+        JButton btnSearch = UITheme.createSecondaryButton("Search", new VectorIcon(VectorIcon.Type.SEARCH, 14, UITheme.TEXT_MAIN));
         btnSearch.addActionListener(e -> searchAllocations());
         filterPanel.add(btnSearch);
 
-        JButton btnReset = UITheme.createSecondaryButton("Reset");
+        JButton btnReset = UITheme.createSecondaryButton("Reset", new VectorIcon(VectorIcon.Type.REFRESH, 14, UITheme.TEXT_MAIN));
         btnReset.addActionListener(e -> {
             searchField.setText("");
             activeOnlyCheck.setSelected(true);
@@ -80,11 +81,11 @@ public class RoomAllocationPanel extends JPanel {
             JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
             actionPanel.setBackground(UITheme.BG_CARD);
 
-            JButton btnAllocate = UITheme.createPrimaryButton("+ Allocate New Room");
+            JButton btnAllocate = UITheme.createPrimaryButton("Allocate Room", new VectorIcon(VectorIcon.Type.ALLOCATION, 14, Color.WHITE));
             btnAllocate.addActionListener(e -> showAllocationDialog());
             actionPanel.add(btnAllocate);
 
-            JButton btnVacate = UITheme.createDangerButton("🚪 Vacate Room");
+            JButton btnVacate = UITheme.createDangerButton("Vacate Room", new VectorIcon(VectorIcon.Type.LOGOUT, 14, Color.WHITE));
             btnVacate.addActionListener(e -> vacateSelectedRoom());
             actionPanel.add(btnVacate);
 
@@ -119,7 +120,6 @@ public class RoomAllocationPanel extends JPanel {
             boolean activeOnly = activeOnlyCheck.isSelected();
             currentAllocations = allocationService.getAllocations(activeOnly);
 
-            // If current user is student, filter only their allocation
             if (SessionManager.getInstance().isStudent()) {
                 Student s = SessionManager.getInstance().getCurrentStudent();
                 if (s != null) {
@@ -253,11 +253,10 @@ public class RoomAllocationPanel extends JPanel {
         roomBox.addActionListener(e -> {
             Room r = (Room) roomBox.getSelectedItem();
             if (r != null) {
-                roomInfoLbl.setText("Type: " + r.getRoomType() + " | Free: " + r.getAvailableBeds() + "/" + r.getTotalCapacity() + " beds | ₹" + r.getMonthlyRent());
+                roomInfoLbl.setText("Type: " + r.getRoomType() + " | Free: " + r.getAvailableBeds() + "/" + r.getTotalCapacity() + " beds | " + UITheme.formatCurrency(r.getMonthlyRent()));
             }
         });
 
-        // Trigger initial info
         if (studentBox.getItemCount() > 0) studentBox.setSelectedIndex(0);
         if (roomBox.getItemCount() > 0) roomBox.setSelectedIndex(0);
 

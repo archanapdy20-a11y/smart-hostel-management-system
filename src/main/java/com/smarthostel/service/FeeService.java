@@ -33,7 +33,7 @@ public class FeeService {
             auditLogDAO.logAction(curr != null ? curr.getUserId() : null,
                     curr != null ? curr.getUsername() : "SYSTEM",
                     "CREATE_FEE", "fees", newId,
-                    "Generated fee invoice of ₹" + f.getTotalAmount() + " for Student ID " + f.getStudentId());
+                    "Generated fee invoice of \u20B9 " + f.getTotalAmount() + " for Student ID " + f.getStudentId());
             return true;
         }
         return false;
@@ -51,7 +51,7 @@ public class FeeService {
         if (success) {
             auditLogDAO.logAction(curr.getUserId(), curr.getUsername(),
                     "FEE_PAYMENT", "payments", p.getPaymentId(),
-                    "Recorded payment of ₹" + p.getAmountPaid() + " via " + p.getPaymentMethod() +
+                    "Recorded payment of \u20B9 " + p.getAmountPaid() + " via " + p.getPaymentMethod() +
                     " [Receipt: " + p.getReceiptNumber() + "] for Student ID " + p.getStudentId());
         }
         return success;

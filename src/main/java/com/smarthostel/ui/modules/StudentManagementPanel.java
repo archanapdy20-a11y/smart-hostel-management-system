@@ -4,6 +4,7 @@ import com.smarthostel.config.SessionManager;
 import com.smarthostel.model.Student;
 import com.smarthostel.service.StudentService;
 import com.smarthostel.ui.components.ModernTable;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
 
@@ -40,7 +41,7 @@ public class StudentManagementPanel extends JPanel {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         searchPanel.setBackground(UITheme.BG_CARD);
 
-        JLabel searchLabel = new JLabel("🔍 Search:");
+        JLabel searchLabel = new JLabel("Search:");
         searchLabel.setFont(UITheme.FONT_BODY_BOLD);
         searchPanel.add(searchLabel);
 
@@ -50,11 +51,11 @@ public class StudentManagementPanel extends JPanel {
         searchField.addActionListener(e -> searchStudents());
         searchPanel.add(searchField);
 
-        JButton btnSearch = UITheme.createSecondaryButton("Search");
+        JButton btnSearch = UITheme.createSecondaryButton("Search", new VectorIcon(VectorIcon.Type.SEARCH, 14, UITheme.TEXT_MAIN));
         btnSearch.addActionListener(e -> searchStudents());
         searchPanel.add(btnSearch);
 
-        JButton btnReset = UITheme.createSecondaryButton("Reset");
+        JButton btnReset = UITheme.createSecondaryButton("Reset", new VectorIcon(VectorIcon.Type.REFRESH, 14, UITheme.TEXT_MAIN));
         btnReset.addActionListener(e -> {
             searchField.setText("");
             loadStudents();
@@ -70,15 +71,15 @@ public class StudentManagementPanel extends JPanel {
             JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
             actionPanel.setBackground(UITheme.BG_CARD);
 
-            JButton btnAdd = UITheme.createPrimaryButton("+ Add Student");
+            JButton btnAdd = UITheme.createPrimaryButton("Register Student", new VectorIcon(VectorIcon.Type.ADD, 14, Color.WHITE));
             btnAdd.addActionListener(e -> showStudentDialog(null));
             actionPanel.add(btnAdd);
 
-            JButton btnEdit = UITheme.createSecondaryButton("✏️ Edit");
+            JButton btnEdit = UITheme.createSecondaryButton("Edit", new VectorIcon(VectorIcon.Type.EDIT, 14, UITheme.TEXT_MAIN));
             btnEdit.addActionListener(e -> editSelectedStudent());
             actionPanel.add(btnEdit);
 
-            JButton btnDelete = UITheme.createDangerButton("🗑️ Delete");
+            JButton btnDelete = UITheme.createDangerButton("Delete", new VectorIcon(VectorIcon.Type.DELETE, 14, Color.WHITE));
             btnDelete.addActionListener(e -> deleteSelectedStudent());
             actionPanel.add(btnDelete);
 

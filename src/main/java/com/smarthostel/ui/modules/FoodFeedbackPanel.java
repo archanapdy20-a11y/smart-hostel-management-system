@@ -5,6 +5,7 @@ import com.smarthostel.model.FoodFeedback;
 import com.smarthostel.model.Student;
 import com.smarthostel.service.FoodService;
 import com.smarthostel.ui.components.ModernTable;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
 
@@ -47,7 +48,8 @@ public class FoodFeedbackPanel extends JPanel {
         titleLbl.setForeground(UITheme.TEXT_MAIN);
         leftPanel.add(titleLbl);
 
-        avgRatingLabel = new JLabel("Avg Rating: 0.0 ★");
+        avgRatingLabel = new JLabel("Avg Rating: 0.0 / 5.0", new VectorIcon(VectorIcon.Type.STAR, 16, UITheme.WARNING), SwingConstants.LEFT);
+        avgRatingLabel.setIconTextGap(6);
         avgRatingLabel.setFont(UITheme.FONT_BODY_BOLD);
         avgRatingLabel.setForeground(UITheme.WARNING);
         leftPanel.add(avgRatingLabel);
@@ -59,12 +61,12 @@ public class FoodFeedbackPanel extends JPanel {
         rightPanel.setBackground(UITheme.BG_CARD);
 
         if (isStudent) {
-            JButton btnSubmit = UITheme.createPrimaryButton("⭐ Rate Today's Meal");
+            JButton btnSubmit = UITheme.createPrimaryButton("Rate Today's Meal", new VectorIcon(VectorIcon.Type.STAR, 14, Color.WHITE));
             btnSubmit.addActionListener(e -> showSubmitFeedbackDialog());
             rightPanel.add(btnSubmit);
         }
 
-        JButton btnRefresh = UITheme.createSecondaryButton("🔄 Refresh");
+        JButton btnRefresh = UITheme.createSecondaryButton("Refresh", new VectorIcon(VectorIcon.Type.REFRESH, 14, UITheme.TEXT_MAIN));
         btnRefresh.addActionListener(e -> loadFeedback());
         rightPanel.add(btnRefresh);
 
@@ -100,7 +102,7 @@ public class FoodFeedbackPanel extends JPanel {
             }
 
             double avg = foodService.getAverageRating();
-            avgRatingLabel.setText("Hostel Avg Rating: " + avg + " ★ (" + currentFeedbackList.size() + " Reviews)");
+            avgRatingLabel.setText(String.format("Hostel Avg: %.1f / 5.0 (%d Reviews)", avg, currentFeedbackList.size()));
 
             tableModel.setRowCount(0);
             for (FoodFeedback fb : currentFeedbackList) {
@@ -179,7 +181,7 @@ public class FoodFeedbackPanel extends JPanel {
                 dialog.dispose();
                 loadFeedback();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(dialog, ex.getMessage(), "Submission Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 

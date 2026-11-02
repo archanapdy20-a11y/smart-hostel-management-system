@@ -8,6 +8,7 @@ import com.smarthostel.model.Complaint;
 import com.smarthostel.service.ComplaintService;
 import com.smarthostel.ui.components.ModernTable;
 import com.smarthostel.ui.components.StatCard;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
 
@@ -45,14 +46,14 @@ public class WardenDashboardPanel extends JPanel {
     }
 
     private void initUI() {
-        // Top: 4 Stat Cards
+        // Top: 4 Stat Cards with vector badges
         JPanel statsPanel = new JPanel(new GridLayout(1, 4, 16, 0));
         statsPanel.setBackground(UITheme.BG_MAIN);
 
-        cardStudents = new StatCard("Hostel Residents", "0", "Enrolled Students", UITheme.PRIMARY);
-        cardAvailableBeds = new StatCard("Available Beds", "0", "Ready for Allocation", UITheme.SUCCESS);
-        cardPendingComplaints = new StatCard("Open Complaints", "0", "Pending Action", UITheme.DANGER);
-        cardFoodRating = new StatCard("Mess Food Rating", "0.0 ★", "Based on Resident Reviews", UITheme.WARNING);
+        cardStudents = new StatCard("Hostel Residents", "0", "Enrolled Students", UITheme.PRIMARY, VectorIcon.Type.STUDENTS);
+        cardAvailableBeds = new StatCard("Available Beds", "0", "Ready for Allocation", UITheme.SUCCESS, VectorIcon.Type.ROOMS);
+        cardPendingComplaints = new StatCard("Open Complaints", "0", "Pending Action", UITheme.DANGER, VectorIcon.Type.COMPLAINTS);
+        cardFoodRating = new StatCard("Mess Food Rating", "0.0 / 5.0", "Resident Reviews", UITheme.WARNING, VectorIcon.Type.FOOD_FEEDBACK);
 
         statsPanel.add(cardStudents);
         statsPanel.add(cardAvailableBeds);
@@ -74,19 +75,19 @@ public class WardenDashboardPanel extends JPanel {
         actionLabel.setForeground(UITheme.TEXT_MAIN);
         actionsCard.add(actionLabel);
 
-        JButton btnManageAlloc = UITheme.createPrimaryButton("🔑 Room Allocation");
+        JButton btnManageAlloc = UITheme.createPrimaryButton("Room Allocation", new VectorIcon(VectorIcon.Type.ALLOCATION, 15, Color.WHITE));
         btnManageAlloc.addActionListener(e -> onNavigate.accept("ALLOCATION"));
         actionsCard.add(btnManageAlloc);
 
-        JButton btnAllComplaints = UITheme.createSecondaryButton("🚨 Resolve Complaints");
+        JButton btnAllComplaints = UITheme.createSecondaryButton("Resolve Complaints", new VectorIcon(VectorIcon.Type.COMPLAINTS, 15, UITheme.TEXT_MAIN));
         btnAllComplaints.addActionListener(e -> onNavigate.accept("COMPLAINTS"));
         actionsCard.add(btnAllComplaints);
 
-        JButton btnViewMenu = UITheme.createSecondaryButton("🍽️ View Food Menu");
+        JButton btnViewMenu = UITheme.createSecondaryButton("View Food Menu", new VectorIcon(VectorIcon.Type.FOOD_MENU, 15, UITheme.TEXT_MAIN));
         btnViewMenu.addActionListener(e -> onNavigate.accept("FOOD_MENU"));
         actionsCard.add(btnViewMenu);
 
-        JButton btnFeedback = UITheme.createSecondaryButton("⭐ Resident Feedback");
+        JButton btnFeedback = UITheme.createSecondaryButton("Resident Feedback", new VectorIcon(VectorIcon.Type.FOOD_FEEDBACK, 15, UITheme.TEXT_MAIN));
         btnFeedback.addActionListener(e -> onNavigate.accept("FOOD_FEEDBACK"));
         actionsCard.add(btnFeedback);
 
@@ -128,7 +129,7 @@ public class WardenDashboardPanel extends JPanel {
             cardPendingComplaints.setSubtitle("Pending: " + cStats.pending + " | In Progress: " + cStats.inProgress);
 
             double rating = foodFeedbackDAO.getAverageRating();
-            cardFoodRating.setValue(rating + " ★");
+            cardFoodRating.setValue(String.format("%.1f / 5.0", rating));
 
             // Complaints
             complaintsTableModel.setRowCount(0);

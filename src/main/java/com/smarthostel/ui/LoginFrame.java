@@ -2,6 +2,7 @@ package com.smarthostel.ui;
 
 import com.smarthostel.model.User;
 import com.smarthostel.service.AuthService;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.UITheme;
 
 import javax.swing.*;
@@ -44,9 +45,8 @@ public class LoginFrame extends JFrame {
         brandPanel.setBackground(UITheme.BG_CARD);
         brandPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel logoIcon = new JLabel("🏫", SwingConstants.CENTER);
-        logoIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 46));
-        logoIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JComponent logoBadge = UITheme.createIconCircle(VectorIcon.Type.HOSTEL, UITheme.PRIMARY, 64, 32);
+        logoBadge.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel titleLabel = new JLabel("SMART HOSTEL");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
@@ -58,14 +58,14 @@ public class LoginFrame extends JFrame {
         subtitleLabel.setForeground(UITheme.TEXT_MUTED);
         subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        brandPanel.add(logoIcon);
-        brandPanel.add(Box.createVerticalStrut(8));
+        brandPanel.add(logoBadge);
+        brandPanel.add(Box.createVerticalStrut(10));
         brandPanel.add(titleLabel);
         brandPanel.add(Box.createVerticalStrut(4));
         brandPanel.add(subtitleLabel);
 
         cardPanel.add(brandPanel);
-        cardPanel.add(Box.createVerticalStrut(24));
+        cardPanel.add(Box.createVerticalStrut(20));
 
         // 2. Form Fields
         JLabel userLbl = new JLabel("Username:");
@@ -76,7 +76,7 @@ public class LoginFrame extends JFrame {
         usernameField = UITheme.createTextField();
         usernameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         usernameField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        usernameField.putClientProperty("JTextField.placeholderText", "Enter your registered username");
+        usernameField.putClientProperty("JTextField.placeholderText", "Enter your username");
 
         JLabel passLbl = new JLabel("Password:");
         passLbl.setFont(UITheme.FONT_BODY_BOLD);
@@ -98,7 +98,7 @@ public class LoginFrame extends JFrame {
             if (showPasswordCheck.isSelected()) {
                 passwordField.setEchoChar((char) 0);
             } else {
-                passwordField.setEchoChar('•');
+                passwordField.setEchoChar('\u2022');
             }
         });
 
@@ -108,8 +108,8 @@ public class LoginFrame extends JFrame {
         errorLabel.setForeground(UITheme.DANGER);
         errorLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Login Button
-        loginButton = UITheme.createPrimaryButton("Sign In to System");
+        // Login Button with icon
+        loginButton = UITheme.createPrimaryButton("Sign In to System", new VectorIcon(VectorIcon.Type.CHECK, 16, Color.WHITE));
         loginButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
         loginButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
         loginButton.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -184,11 +184,9 @@ public class LoginFrame extends JFrame {
                 User user = authService.login(username, password);
                 errorLabel.setText(" ");
 
-                // Open Main Dashboard Frame with role-aware view
                 MainDashboardFrame mainFrame = new MainDashboardFrame();
                 mainFrame.setVisible(true);
 
-                // Close login window
                 dispose();
 
             } catch (Exception ex) {
@@ -227,7 +225,7 @@ public class LoginFrame extends JFrame {
         JButton cancelBtn = UITheme.createSecondaryButton("Cancel");
         cancelBtn.addActionListener(e -> dialog.dispose());
 
-        JButton resetBtn = UITheme.createPrimaryButton("Reset Password");
+        JButton resetBtn = UITheme.createPrimaryButton("Reset Password", new VectorIcon(VectorIcon.Type.LOCK, 15, Color.WHITE));
         resetBtn.addActionListener(e -> {
             try {
                 authService.resetPassword(uField.getText().trim(), emailField.getText().trim(), new String(newPass.getPassword()));

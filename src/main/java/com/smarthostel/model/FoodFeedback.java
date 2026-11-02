@@ -8,11 +8,10 @@ public class FoodFeedback {
     private int studentId;
     private Date menuDate;
     private String mealType;
-    private int rating; // 1 to 5
+    private int rating;
     private String comments;
     private Timestamp submittedAt;
 
-    // Display helpers
     private String studentName;
     private String registerNumber;
 
@@ -104,10 +103,10 @@ public class FoodFeedback {
     public String getRatingStars() {
         StringBuilder stars = new StringBuilder();
         for (int i = 0; i < rating; i++) {
-            stars.append("★");
+            stars.append('\u2605');
         }
         for (int i = rating; i < 5; i++) {
-            stars.append("☆");
+            stars.append('\u2606');
         }
         return stars.toString();
     }

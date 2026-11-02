@@ -9,8 +9,6 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class HeaderPanel extends JPanel {
 
@@ -48,15 +46,16 @@ public class HeaderPanel extends JPanel {
 
         add(titlePanel, BorderLayout.WEST);
 
-        // Right: Refresh button, Date & User Profile Pill
+        // Right: Refresh button and User Profile Pill
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 14, 0));
         rightPanel.setBackground(UITheme.BG_CARD);
 
-        JButton refreshBtn = new JButton("🔄 Refresh");
+        JButton refreshBtn = new JButton("Refresh", new VectorIcon(VectorIcon.Type.REFRESH, 14, UITheme.TEXT_MAIN));
         refreshBtn.setFont(UITheme.FONT_SMALL_BOLD);
         refreshBtn.setBackground(UITheme.BG_SUBTLE);
         refreshBtn.setForeground(UITheme.TEXT_MAIN);
         refreshBtn.setBorder(new CompoundBorder(new LineBorder(UITheme.BORDER, 1), new EmptyBorder(6, 12, 6, 12)));
+        refreshBtn.setIconTextGap(8);
         refreshBtn.setFocusPainted(false);
         refreshBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         refreshBtn.addActionListener(e -> {

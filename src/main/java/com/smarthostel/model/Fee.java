@@ -134,6 +134,6 @@ public class Fee {
 
     @Override
     public String toString() {
-        return studentName + " - " + semester + " (Pending: ₹" + pendingAmount + ")";
+        return studentName + " - " + semester + " (Pending: \u20B9 " + pendingAmount + ")";
     }
 }

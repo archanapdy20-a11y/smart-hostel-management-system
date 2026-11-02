@@ -37,7 +37,7 @@ public class PaymentDAO {
                 throw new SQLException("Payment amount must be greater than zero!");
             }
             if (p.getAmountPaid().compareTo(currentPending) > 0) {
-                throw new SQLException("Payment amount (₹" + p.getAmountPaid() + ") cannot exceed pending amount (₹" + currentPending + ")!");
+                throw new SQLException("Payment amount (\u20B9 " + p.getAmountPaid() + ") cannot exceed pending amount (\u20B9 " + currentPending + ")!");
             }
 
             // 2. Generate unique receipt number if not provided

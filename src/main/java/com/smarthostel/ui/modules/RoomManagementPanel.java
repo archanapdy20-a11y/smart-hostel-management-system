@@ -4,6 +4,7 @@ import com.smarthostel.config.SessionManager;
 import com.smarthostel.model.Room;
 import com.smarthostel.service.RoomService;
 import com.smarthostel.ui.components.ModernTable;
+import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.UITheme;
 import com.smarthostel.util.ValidationUtil;
 
@@ -55,11 +56,11 @@ public class RoomManagementPanel extends JPanel {
         searchField.addActionListener(e -> searchRooms());
         filterPanel.add(searchField);
 
-        JButton btnSearch = UITheme.createSecondaryButton("Search");
+        JButton btnSearch = UITheme.createSecondaryButton("Search", new VectorIcon(VectorIcon.Type.SEARCH, 14, UITheme.TEXT_MAIN));
         btnSearch.addActionListener(e -> searchRooms());
         filterPanel.add(btnSearch);
 
-        JButton btnReset = UITheme.createSecondaryButton("Reset");
+        JButton btnReset = UITheme.createSecondaryButton("Reset", new VectorIcon(VectorIcon.Type.REFRESH, 14, UITheme.TEXT_MAIN));
         btnReset.addActionListener(e -> {
             searchField.setText("");
             filterBox.setSelectedIndex(0);
@@ -74,15 +75,15 @@ public class RoomManagementPanel extends JPanel {
             JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
             actionPanel.setBackground(UITheme.BG_CARD);
 
-            JButton btnAdd = UITheme.createPrimaryButton("+ Add Room");
+            JButton btnAdd = UITheme.createPrimaryButton("Add Room", new VectorIcon(VectorIcon.Type.ADD, 14, Color.WHITE));
             btnAdd.addActionListener(e -> showRoomDialog(null));
             actionPanel.add(btnAdd);
 
-            JButton btnEdit = UITheme.createSecondaryButton("✏️ Edit");
+            JButton btnEdit = UITheme.createSecondaryButton("Edit", new VectorIcon(VectorIcon.Type.EDIT, 14, UITheme.TEXT_MAIN));
             btnEdit.addActionListener(e -> editSelectedRoom());
             actionPanel.add(btnEdit);
 
-            JButton btnDelete = UITheme.createDangerButton("🗑️ Delete");
+            JButton btnDelete = UITheme.createDangerButton("Delete", new VectorIcon(VectorIcon.Type.DELETE, 14, Color.WHITE));
             btnDelete.addActionListener(e -> deleteSelectedRoom());
             actionPanel.add(btnDelete);
 
@@ -159,7 +160,7 @@ public class RoomManagementPanel extends JPanel {
                     r.getTotalCapacity(),
                     r.getOccupiedCapacity(),
                     r.getAvailableBeds(),
-                    "₹" + r.getMonthlyRent().toPlainString(),
+                    UITheme.formatCurrency(r.getMonthlyRent()),
                     r.getStatus()
             });
         }
@@ -235,7 +236,6 @@ public class RoomManagementPanel extends JPanel {
             rentField.setText("5000.00");
         }
 
-        // Auto sync capacity when type changes
         typeBox.addActionListener(e -> {
             String t = (String) typeBox.getSelectedItem();
             if ("Single".equals(t)) capBox.setSelectedItem(1);
@@ -253,7 +253,7 @@ public class RoomManagementPanel extends JPanel {
         form.add(typeBox);
         form.add(new JLabel("Total Bed Capacity: *"));
         form.add(capBox);
-        form.add(new JLabel("Monthly Rent (₹): *"));
+        form.add(new JLabel("Monthly Rent (" + UITheme.CURRENCY_SYMBOL + "): *"));
         form.add(rentField);
         form.add(new JLabel("Room Status: *"));
         form.add(statusBox);
