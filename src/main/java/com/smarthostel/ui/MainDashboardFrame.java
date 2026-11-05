@@ -11,12 +11,18 @@ import com.smarthostel.util.UITheme;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class MainDashboardFrame extends JFrame {
 
     private final AuthService authService = new AuthService();
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel contentArea = new JPanel(cardLayout);
+
+    private final Deque<String> backHistory = new ArrayDeque<>();
+    private final Deque<String> forwardHistory = new ArrayDeque<>();
+    private boolean isNavigatingHistory = false;
 
     private HeaderPanel headerPanel;
     private SidebarPanel sidebarPanel;
@@ -61,8 +67,8 @@ public class MainDashboardFrame extends JFrame {
         JPanel mainWrapper = new JPanel(new BorderLayout());
         mainWrapper.setBackground(UITheme.BG_MAIN);
 
-        // Header Panel (NORTH)
-        headerPanel = new HeaderPanel(this::refreshCurrentModule);
+        // Header Panel with forward and backward navigation support
+        headerPanel = new HeaderPanel(this::refreshCurrentModule, this::navigateBack, this::navigateForward);
         mainWrapper.add(headerPanel, BorderLayout.NORTH);
 
         // 3. Central Dynamic Card Area (CENTER)
@@ -119,10 +125,46 @@ public class MainDashboardFrame extends JFrame {
     }
 
     public void navigateTo(String moduleKey) {
+        if (!isNavigatingHistory && currentModule != null && !currentModule.equals(moduleKey)) {
+            backHistory.push(currentModule);
+            forwardHistory.clear();
+        }
         this.currentModule = moduleKey;
         cardLayout.show(contentArea, moduleKey);
         updateHeaderTitles(moduleKey);
+        if (sidebarPanel != null) {
+            sidebarPanel.setActiveItemByKey(moduleKey);
+        }
+        if (headerPanel != null) {
+            headerPanel.updateHistoryButtons(!backHistory.isEmpty(), !forwardHistory.isEmpty());
+        }
         refreshCurrentModule();
+    }
+
+    public void navigateBack() {
+        if (!backHistory.isEmpty()) {
+            isNavigatingHistory = true;
+            forwardHistory.push(currentModule);
+            String prev = backHistory.pop();
+            navigateTo(prev);
+            isNavigatingHistory = false;
+            if (headerPanel != null) {
+                headerPanel.updateHistoryButtons(!backHistory.isEmpty(), !forwardHistory.isEmpty());
+            }
+        }
+    }
+
+    public void navigateForward() {
+        if (!forwardHistory.isEmpty()) {
+            isNavigatingHistory = true;
+            backHistory.push(currentModule);
+            String next = forwardHistory.pop();
+            navigateTo(next);
+            isNavigatingHistory = false;
+            if (headerPanel != null) {
+                headerPanel.updateHistoryButtons(!backHistory.isEmpty(), !forwardHistory.isEmpty());
+            }
+        }
     }
 
     private void updateHeaderTitles(String key) {

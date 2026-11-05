@@ -13,7 +13,7 @@ public class VectorIcon implements Icon {
         SEARCH, REFRESH, ADD, EDIT, DELETE, EXPORT_CSV, PRINT_PDF,
         CHECK, LOCK, INFO, STAR, HOSTEL, EYE, EYE_OFF, CALENDAR,
         BED, DOOR, USER_PLUS, KEY, BELL, TREND_UP, FILTER, SHIELD_CHECK,
-        BUILDING, WARNING
+        BUILDING, WARNING, CHEVRON_LEFT, CHEVRON_RIGHT, MENU
     }
 
     private final Type type;
@@ -401,6 +401,28 @@ public class VectorIcon implements Icon {
                 fn.lineTo(10, 12);
                 fn.closePath();
                 g2.draw(fn);
+                break;
+
+            case CHEVRON_LEFT:
+                Path2D chevL = new Path2D.Float();
+                chevL.moveTo(15, 5);
+                chevL.lineTo(8, 12);
+                chevL.lineTo(15, 19);
+                g2.draw(chevL);
+                break;
+
+            case CHEVRON_RIGHT:
+                Path2D chevR = new Path2D.Float();
+                chevR.moveTo(9, 5);
+                chevR.lineTo(16, 12);
+                chevR.lineTo(9, 19);
+                g2.draw(chevR);
+                break;
+
+            case MENU:
+                g2.draw(new Line2D.Float(4, 6, 20, 6));
+                g2.draw(new Line2D.Float(4, 12, 20, 12));
+                g2.draw(new Line2D.Float(4, 18, 20, 18));
                 break;
         }
     }
