@@ -53,7 +53,8 @@ public class ReportsPanel extends JPanel {
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         leftPanel.setBackground(UITheme.BG_CARD);
 
-        JLabel catLbl = new JLabel("Select Report Type:");
+        JLabel catLbl = new JLabel("Select Report Type:", new VectorIcon(VectorIcon.Type.REPORTS, 14, UITheme.PRIMARY), SwingConstants.LEFT);
+        catLbl.setIconTextGap(6);
         catLbl.setFont(UITheme.FONT_BODY_BOLD);
         leftPanel.add(catLbl);
 

@@ -1,6 +1,7 @@
 package com.smarthostel.ui.modules;
 
 import com.smarthostel.config.SessionManager;
+import com.smarthostel.dao.StudentDAO;
 import com.smarthostel.model.Student;
 import com.smarthostel.service.StudentService;
 import com.smarthostel.ui.components.ModernTable;
@@ -18,22 +19,60 @@ import java.util.List;
 public class StudentManagementPanel extends JPanel {
 
     private final StudentService studentService = new StudentService();
+    private final StudentDAO studentDAO = new StudentDAO();
     private DefaultTableModel tableModel;
     private ModernTable table;
     private JTextField searchField;
     private List<Student> currentStudentList;
 
+    private JLabel totalStudentsLbl;
+    private JLabel allocatedStudentsLbl;
+    private JLabel pendingStudentsLbl;
+    private JLabel departmentsLbl;
+
     public StudentManagementPanel() {
         setLayout(new BorderLayout(0, 16));
         setBackground(UITheme.BG_MAIN);
-        setBorder(new EmptyBorder(24, 24, 24, 24));
+        setBorder(new EmptyBorder(22, 24, 24, 24));
 
         initUI();
         loadStudents();
     }
 
     private void initUI() {
-        // Top Toolbar Card: Search + Action Buttons
+        JPanel topContainer = new JPanel();
+        topContainer.setLayout(new BoxLayout(topContainer, BoxLayout.Y_AXIS));
+        topContainer.setBackground(UITheme.BG_MAIN);
+
+        // 1. Student Directory KPI Banner
+        JPanel kpiCard = UITheme.createCard();
+        kpiCard.setLayout(new GridLayout(1, 4, 16, 0));
+
+        totalStudentsLbl = new JLabel("0 Students", new VectorIcon(VectorIcon.Type.STUDENTS, 20, UITheme.PRIMARY), SwingConstants.LEFT);
+        totalStudentsLbl.setFont(UITheme.FONT_SUBTITLE);
+        totalStudentsLbl.setIconTextGap(8);
+
+        allocatedStudentsLbl = new JLabel("0 Allocated", new VectorIcon(VectorIcon.Type.KEY, 20, UITheme.SUCCESS), SwingConstants.LEFT);
+        allocatedStudentsLbl.setFont(UITheme.FONT_SUBTITLE);
+        allocatedStudentsLbl.setIconTextGap(8);
+
+        pendingStudentsLbl = new JLabel("0 Unallocated", new VectorIcon(VectorIcon.Type.COMPLAINTS, 20, UITheme.WARNING), SwingConstants.LEFT);
+        pendingStudentsLbl.setFont(UITheme.FONT_SUBTITLE);
+        pendingStudentsLbl.setIconTextGap(8);
+
+        departmentsLbl = new JLabel("0 Academic Depts", new VectorIcon(VectorIcon.Type.REPORTS, 20, new Color(14, 165, 233)), SwingConstants.LEFT);
+        departmentsLbl.setFont(UITheme.FONT_SUBTITLE);
+        departmentsLbl.setIconTextGap(8);
+
+        kpiCard.add(createKpiBox("TOTAL ENROLLED", totalStudentsLbl));
+        kpiCard.add(createKpiBox("ROOM ALLOCATED", allocatedStudentsLbl));
+        kpiCard.add(createKpiBox("PENDING ALLOTMENT", pendingStudentsLbl));
+        kpiCard.add(createKpiBox("DEPARTMENTS", departmentsLbl));
+
+        topContainer.add(kpiCard);
+        topContainer.add(Box.createVerticalStrut(12));
+
+        // 2. Toolbar Card: Search + Action Buttons
         JPanel toolbarCard = UITheme.createCard();
         toolbarCard.setLayout(new BorderLayout(16, 0));
 
@@ -41,8 +80,9 @@ public class StudentManagementPanel extends JPanel {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         searchPanel.setBackground(UITheme.BG_CARD);
 
-        JLabel searchLabel = new JLabel("Search:");
+        JLabel searchLabel = new JLabel("Search:", new VectorIcon(VectorIcon.Type.SEARCH, 14, UITheme.TEXT_MUTED), SwingConstants.LEFT);
         searchLabel.setFont(UITheme.FONT_BODY_BOLD);
+        searchLabel.setIconTextGap(6);
         searchPanel.add(searchLabel);
 
         searchField = UITheme.createTextField();
@@ -71,7 +111,7 @@ public class StudentManagementPanel extends JPanel {
             JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
             actionPanel.setBackground(UITheme.BG_CARD);
 
-            JButton btnAdd = UITheme.createPrimaryButton("Register Student", new VectorIcon(VectorIcon.Type.ADD, 14, Color.WHITE));
+            JButton btnAdd = UITheme.createPrimaryButton("Register Student", new VectorIcon(VectorIcon.Type.USER_PLUS, 14, Color.WHITE));
             btnAdd.addActionListener(e -> showStudentDialog(null));
             actionPanel.add(btnAdd);
 
@@ -86,7 +126,8 @@ public class StudentManagementPanel extends JPanel {
             toolbarCard.add(actionPanel, BorderLayout.EAST);
         }
 
-        add(toolbarCard, BorderLayout.NORTH);
+        topContainer.add(toolbarCard);
+        add(topContainer, BorderLayout.NORTH);
 
         // Center Table Card
         JPanel tableCard = UITheme.createCard();
@@ -109,13 +150,39 @@ public class StudentManagementPanel extends JPanel {
         add(tableCard, BorderLayout.CENTER);
     }
 
+    private JPanel createKpiBox(String title, JLabel label) {
+        JPanel box = new JPanel();
+        box.setLayout(new BoxLayout(box, BoxLayout.Y_AXIS));
+        box.setOpaque(false);
+        JLabel titleLbl = new JLabel(title);
+        titleLbl.setFont(UITheme.FONT_SMALL_BOLD);
+        titleLbl.setForeground(new Color(100, 116, 139));
+        box.add(titleLbl);
+        box.add(Box.createVerticalStrut(4));
+        box.add(label);
+        return box;
+    }
+
     public void loadStudents() {
         try {
             currentStudentList = studentService.getAllStudents();
             populateTable(currentStudentList);
+            updateKpis();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading students: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void updateKpis() {
+        if (currentStudentList == null) return;
+        long allocated = currentStudentList.stream().filter(s -> s.getAllocatedRoom() != null && !s.getAllocatedRoom().trim().isEmpty()).count();
+        long pending = currentStudentList.size() - allocated;
+        long depts = currentStudentList.stream().map(Student::getDepartment).distinct().count();
+
+        totalStudentsLbl.setText(currentStudentList.size() + " Students");
+        allocatedStudentsLbl.setText(allocated + " Allocated");
+        pendingStudentsLbl.setText(pending + " Unallocated");
+        departmentsLbl.setText(depts + " Departments");
     }
 
     private void searchStudents() {
@@ -123,6 +190,7 @@ public class StudentManagementPanel extends JPanel {
         try {
             currentStudentList = studentService.searchStudents(query);
             populateTable(currentStudentList);
+            updateKpis();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Search error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -138,7 +206,7 @@ public class StudentManagementPanel extends JPanel {
                     s.getGender(),
                     s.getDepartment(),
                     "Year " + s.getAcademicYear(),
-                    s.getAllocatedRoom(),
+                    (s.getAllocatedRoom() != null && !s.getAllocatedRoom().trim().isEmpty()) ? s.getAllocatedRoom() : "UNALLOCATED",
                     s.getPhoneNumber(),
                     s.getEmail(),
                     s.getParentName(),

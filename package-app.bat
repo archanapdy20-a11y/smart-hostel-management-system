@@ -65,3 +65,4 @@ echo  [SUCCESS] Standalone Windows Desktop App generated:
 echo  %BASE_DIR%dist\Smart-Hostel-Management-System\Smart-Hostel-Management-System.exe
 echo =========================================================================
 pause
+

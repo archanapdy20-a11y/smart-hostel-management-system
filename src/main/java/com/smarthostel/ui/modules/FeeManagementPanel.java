@@ -7,6 +7,7 @@ import com.smarthostel.model.Student;
 import com.smarthostel.service.FeeService;
 import com.smarthostel.service.StudentService;
 import com.smarthostel.ui.components.ModernTable;
+import com.smarthostel.ui.components.StatCard;
 import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
@@ -33,6 +34,11 @@ public class FeeManagementPanel extends JPanel {
 
     private List<Fee> currentFees;
     private List<Payment> currentPayments;
+
+    private StatCard totalInvoicedCard;
+    private StatCard totalCollectedCard;
+    private StatCard pendingDuesCard;
+    private StatCard totalTransactionsCard;
 
     public FeeManagementPanel() {
         setLayout(new BorderLayout(0, 16));
@@ -85,7 +91,23 @@ public class FeeManagementPanel extends JPanel {
             toolbarCard.add(actionPanel, BorderLayout.EAST);
         }
 
-        add(toolbarCard, BorderLayout.NORTH);
+        // KPI Metric Banner
+        JPanel kpiPanel = new JPanel(new GridLayout(1, 4, 16, 0));
+        kpiPanel.setOpaque(false);
+        totalInvoicedCard = new StatCard("TOTAL INVOICED", UITheme.formatCurrency(0.0), VectorIcon.Type.FEES, UITheme.PRIMARY);
+        totalCollectedCard = new StatCard("COLLECTED FEES", UITheme.formatCurrency(0.0), VectorIcon.Type.TREND_UP, UITheme.SUCCESS);
+        pendingDuesCard = new StatCard("PENDING DUES", UITheme.formatCurrency(0.0), VectorIcon.Type.COMPLAINTS, UITheme.DANGER);
+        totalTransactionsCard = new StatCard("PAYMENT RECEIPTS", "0", VectorIcon.Type.REPORTS, UITheme.INFO);
+        kpiPanel.add(totalInvoicedCard);
+        kpiPanel.add(totalCollectedCard);
+        kpiPanel.add(pendingDuesCard);
+        kpiPanel.add(totalTransactionsCard);
+
+        JPanel topContainer = new JPanel(new BorderLayout(0, 14));
+        topContainer.setOpaque(false);
+        topContainer.add(kpiPanel, BorderLayout.NORTH);
+        topContainer.add(toolbarCard, BorderLayout.SOUTH);
+        add(topContainer, BorderLayout.NORTH);
 
         // Center: Tabbed Pane for Fees Invoices vs Payment Receipts
         tabbedPane = new JTabbedPane();
@@ -167,6 +189,26 @@ public class FeeManagementPanel extends JPanel {
                         p.getRemarks() != null ? p.getRemarks() : ""
                 });
             }
+
+            // Update KPI metric summary cards
+            BigDecimal totalInvoiced = BigDecimal.ZERO;
+            BigDecimal totalCollected = BigDecimal.ZERO;
+            BigDecimal pendingDues = BigDecimal.ZERO;
+            for (Fee f : currentFees) {
+                if (f.getTotalAmount() != null) totalInvoiced = totalInvoiced.add(f.getTotalAmount());
+                if (f.getPaidAmount() != null) totalCollected = totalCollected.add(f.getPaidAmount());
+                if (f.getPendingAmount() != null) pendingDues = pendingDues.add(f.getPendingAmount());
+            }
+            if (totalInvoicedCard != null) totalInvoicedCard.setValue(UITheme.formatCurrency(totalInvoiced));
+            if (totalCollectedCard != null) {
+                totalCollectedCard.setValue(UITheme.formatCurrency(totalCollected));
+                if (totalInvoiced.compareTo(BigDecimal.ZERO) > 0) {
+                    int pct = totalCollected.multiply(BigDecimal.valueOf(100)).divide(totalInvoiced, 0, java.math.RoundingMode.HALF_UP).intValue();
+                    totalCollectedCard.setProgress(pct);
+                }
+            }
+            if (pendingDuesCard != null) pendingDuesCard.setValue(UITheme.formatCurrency(pendingDues));
+            if (totalTransactionsCard != null) totalTransactionsCard.setValue(String.valueOf(currentPayments.size()));
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading fee records: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

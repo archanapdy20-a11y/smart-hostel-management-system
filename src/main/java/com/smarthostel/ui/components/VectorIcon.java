@@ -11,7 +11,9 @@ public class VectorIcon implements Icon {
         DASHBOARD, STUDENTS, ROOMS, ALLOCATION, FEES, COMPLAINTS,
         FOOD_MENU, FOOD_FEEDBACK, USERS, REPORTS, PROFILE, LOGOUT,
         SEARCH, REFRESH, ADD, EDIT, DELETE, EXPORT_CSV, PRINT_PDF,
-        CHECK, LOCK, INFO, STAR, HOSTEL, EYE, EYE_OFF, CALENDAR
+        CHECK, LOCK, INFO, STAR, HOSTEL, EYE, EYE_OFF, CALENDAR,
+        BED, DOOR, USER_PLUS, KEY, BELL, TREND_UP, FILTER, SHIELD_CHECK,
+        BUILDING, WARNING
     }
 
     private final Type type;
@@ -87,23 +89,41 @@ public class VectorIcon implements Icon {
                 g2.draw(new Arc2D.Float(4, 15, 16, 12, 0, 180, Arc2D.OPEN));
                 break;
 
+            case USER_PLUS:
+                // Student with addition badge
+                g2.draw(new Ellipse2D.Float(5, 4, 7, 7));
+                g2.draw(new Arc2D.Float(2, 13, 13, 10, 0, 180, Arc2D.OPEN));
+                g2.draw(new Line2D.Float(19, 9, 19, 17));
+                g2.draw(new Line2D.Float(15, 13, 23, 13));
+                break;
+
             case ROOMS:
+            case BED:
                 // Hostel bunk bed outline
                 g2.draw(new Line2D.Float(3, 4, 3, 20));
-                g2.draw(new Line2D.Float(21, 8, 21, 20));
+                g2.draw(new Line2D.Float(21, 4, 21, 20));
                 g2.draw(new Line2D.Float(3, 14, 21, 14));
-                g2.fill(new RoundRectangle2D.Float(5, 10, 5, 3.5f, 1, 1));
-                g2.draw(new Line2D.Float(3, 7, 21, 7));
-                g2.fill(new RoundRectangle2D.Float(5, 4.5f, 5, 2.5f, 1, 1));
+                g2.draw(new Line2D.Float(3, 8, 21, 8));
+                g2.fill(new RoundRectangle2D.Float(5, 5.5f, 4.5f, 2.5f, 1, 1));
+                g2.fill(new RoundRectangle2D.Float(5, 11.5f, 4.5f, 2.5f, 1, 1));
+                g2.draw(new Line2D.Float(17, 8, 17, 20));
                 break;
 
             case ALLOCATION:
+            case KEY:
                 // Room key icon
                 g2.draw(new Ellipse2D.Float(3, 3, 9, 9));
                 g2.fill(new Ellipse2D.Float(6.5f, 6.5f, 2, 2));
                 g2.draw(new Line2D.Float(10.5f, 10.5f, 20, 20));
                 g2.draw(new Line2D.Float(17, 17, 19, 15));
                 g2.draw(new Line2D.Float(19, 19, 21, 17));
+                break;
+
+            case DOOR:
+                // Hostel room door
+                g2.draw(new RoundRectangle2D.Float(5, 3, 14, 18, 2, 2));
+                g2.fill(new Ellipse2D.Float(15, 12, 2, 2));
+                g2.draw(new Line2D.Float(3, 21, 21, 21));
                 break;
 
             case FEES:
@@ -127,6 +147,23 @@ public class VectorIcon implements Icon {
                 g2.draw(shield);
                 g2.draw(new Line2D.Float(12, 8, 12, 13));
                 g2.fill(new Ellipse2D.Float(11, 15.5f, 2, 2));
+                break;
+
+            case SHIELD_CHECK:
+                Path2D sCheck = new Path2D.Float();
+                sCheck.moveTo(12, 3);
+                sCheck.lineTo(21, 6.5f);
+                sCheck.lineTo(21, 12);
+                sCheck.curveTo(21, 17, 17, 20.5f, 12, 22);
+                sCheck.curveTo(7, 20.5f, 3, 17, 3, 12);
+                sCheck.lineTo(3, 6.5f);
+                sCheck.closePath();
+                g2.draw(sCheck);
+                Path2D ck = new Path2D.Float();
+                ck.moveTo(8, 12);
+                ck.lineTo(11, 15);
+                ck.lineTo(16, 9);
+                g2.draw(ck);
                 break;
 
             case FOOD_MENU:
@@ -276,6 +313,7 @@ public class VectorIcon implements Icon {
                 break;
 
             case HOSTEL:
+            case BUILDING:
                 // Campus hostel building
                 Path2D roof = new Path2D.Float();
                 roof.moveTo(12, 2);
@@ -287,6 +325,17 @@ public class VectorIcon implements Icon {
                 g2.fill(new Rectangle2D.Float(10, 15, 4, 6));
                 g2.fill(new Rectangle2D.Float(6, 10, 3, 3));
                 g2.fill(new Rectangle2D.Float(15, 10, 3, 3));
+                break;
+
+            case WARNING:
+                Path2D tri = new Path2D.Float();
+                tri.moveTo(12, 3);
+                tri.lineTo(22, 20);
+                tri.lineTo(2, 20);
+                tri.closePath();
+                g2.draw(tri);
+                g2.draw(new Line2D.Float(12, 9, 12, 14));
+                g2.fill(new Ellipse2D.Float(11, 16, 2, 2));
                 break;
 
             case EYE:
@@ -317,6 +366,42 @@ public class VectorIcon implements Icon {
                 g2.fill(new Rectangle2D.Float(11, 12, 2.5f, 2.5f));
                 g2.fill(new Rectangle2D.Float(16, 12, 2.5f, 2.5f));
                 break;
+
+            case BELL:
+                // Notification bell
+                Path2D bell = new Path2D.Float();
+                bell.moveTo(12, 4);
+                bell.curveTo(10, 4, 6, 7, 6, 14);
+                bell.lineTo(4, 17);
+                bell.lineTo(20, 17);
+                bell.lineTo(18, 14);
+                bell.curveTo(18, 7, 14, 4, 12, 4);
+                bell.closePath();
+                g2.draw(bell);
+                g2.draw(new Arc2D.Float(10, 17, 4, 4, 0, -180, Arc2D.OPEN));
+                break;
+
+            case TREND_UP:
+                // Upward trend arrow
+                g2.draw(new Line2D.Float(4, 18, 11, 11));
+                g2.draw(new Line2D.Float(11, 11, 15, 15));
+                g2.draw(new Line2D.Float(15, 15, 20, 6));
+                g2.draw(new Line2D.Float(14, 6, 20, 6));
+                g2.draw(new Line2D.Float(20, 6, 20, 12));
+                break;
+
+            case FILTER:
+                // Funnel filter
+                Path2D fn = new Path2D.Float();
+                fn.moveTo(3, 5);
+                fn.lineTo(21, 5);
+                fn.lineTo(14, 12);
+                fn.lineTo(14, 19);
+                fn.lineTo(10, 17);
+                fn.lineTo(10, 12);
+                fn.closePath();
+                g2.draw(fn);
+                break;
         }
     }
 
@@ -336,4 +421,3 @@ public class VectorIcon implements Icon {
         g2.fill(star);
     }
 }
-

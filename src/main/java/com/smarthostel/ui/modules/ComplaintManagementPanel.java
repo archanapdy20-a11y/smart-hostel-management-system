@@ -5,6 +5,7 @@ import com.smarthostel.model.Complaint;
 import com.smarthostel.model.Student;
 import com.smarthostel.service.ComplaintService;
 import com.smarthostel.ui.components.ModernTable;
+import com.smarthostel.ui.components.StatCard;
 import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
@@ -23,6 +24,11 @@ public class ComplaintManagementPanel extends JPanel {
     private JComboBox<String> statusFilterBox;
     private JTextField searchField;
     private List<Complaint> currentComplaints;
+
+    private StatCard totalTicketsCard;
+    private StatCard pendingCard;
+    private StatCard inProgressCard;
+    private StatCard resolvedCard;
 
     public ComplaintManagementPanel() {
         setLayout(new BorderLayout(0, 16));
@@ -45,7 +51,8 @@ public class ComplaintManagementPanel extends JPanel {
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         filterPanel.setBackground(UITheme.BG_CARD);
 
-        JLabel filterLbl = new JLabel("Status:");
+        JLabel filterLbl = new JLabel("Status:", new VectorIcon(VectorIcon.Type.FILTER, 13, UITheme.TEXT_MUTED), SwingConstants.LEFT);
+        filterLbl.setIconTextGap(6);
         filterLbl.setFont(UITheme.FONT_BODY_BOLD);
         filterPanel.add(filterLbl);
 
@@ -94,7 +101,23 @@ public class ComplaintManagementPanel extends JPanel {
         actionPanel.add(btnViewDetails);
 
         toolbarCard.add(actionPanel, BorderLayout.EAST);
-        add(toolbarCard, BorderLayout.NORTH);
+        // KPI Metric Banner
+        JPanel kpiPanel = new JPanel(new GridLayout(1, 4, 16, 0));
+        kpiPanel.setOpaque(false);
+        totalTicketsCard = new StatCard("TOTAL TICKETS", "0", VectorIcon.Type.COMPLAINTS, UITheme.PRIMARY);
+        pendingCard = new StatCard("PENDING ISSUES", "0", VectorIcon.Type.WARNING, UITheme.WARNING);
+        inProgressCard = new StatCard("IN PROGRESS", "0", VectorIcon.Type.TREND_UP, UITheme.INFO);
+        resolvedCard = new StatCard("RESOLVED ISSUES", "0", VectorIcon.Type.CHECK, UITheme.SUCCESS);
+        kpiPanel.add(totalTicketsCard);
+        kpiPanel.add(pendingCard);
+        kpiPanel.add(inProgressCard);
+        kpiPanel.add(resolvedCard);
+
+        JPanel topContainer = new JPanel(new BorderLayout(0, 14));
+        topContainer.setOpaque(false);
+        topContainer.add(kpiPanel, BorderLayout.NORTH);
+        topContainer.add(toolbarCard, BorderLayout.SOUTH);
+        add(topContainer, BorderLayout.NORTH);
 
         // Center Table Card
         JPanel tableCard = UITheme.createCard();
@@ -135,9 +158,38 @@ public class ComplaintManagementPanel extends JPanel {
             }
 
             populateTable(currentComplaints);
+            updateKpiMetrics();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading complaints: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void updateKpiMetrics() {
+        boolean isStudent = SessionManager.getInstance().isStudent();
+        Student s = SessionManager.getInstance().getCurrentStudent();
+        try {
+            List<Complaint> allStats;
+            if (isStudent && s != null) {
+                allStats = complaintService.getComplaintsByStudent(s.getStudentId());
+            } else {
+                allStats = complaintService.getAllComplaints("ALL");
+            }
+            long total = allStats.size();
+            long pending = allStats.stream().filter(c -> "Pending".equalsIgnoreCase(c.getStatus())).count();
+            long inProg = allStats.stream().filter(c -> "In Progress".equalsIgnoreCase(c.getStatus())).count();
+            long resolved = allStats.stream().filter(c -> "Resolved".equalsIgnoreCase(c.getStatus())).count();
+
+            if (totalTicketsCard != null) totalTicketsCard.setValue(String.valueOf(total));
+            if (pendingCard != null) pendingCard.setValue(String.valueOf(pending));
+            if (inProgressCard != null) inProgressCard.setValue(String.valueOf(inProg));
+            if (resolvedCard != null) {
+                resolvedCard.setValue(String.valueOf(resolved));
+                if (total > 0) {
+                    int pct = (int) Math.round((resolved * 100.0) / total);
+                    resolvedCard.setProgress(pct);
+                }
+            }
+        } catch (Exception ignored) {}
     }
 
     private void searchComplaints() {

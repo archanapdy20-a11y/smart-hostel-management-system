@@ -1,6 +1,7 @@
 package com.smarthostel.ui.modules;
 
 import com.smarthostel.config.SessionManager;
+import com.smarthostel.dao.RoomDAO;
 import com.smarthostel.model.Room;
 import com.smarthostel.service.RoomService;
 import com.smarthostel.ui.components.ModernTable;
@@ -18,32 +19,70 @@ import java.util.List;
 public class RoomManagementPanel extends JPanel {
 
     private final RoomService roomService = new RoomService();
+    private final RoomDAO roomDAO = new RoomDAO();
     private DefaultTableModel tableModel;
     private ModernTable table;
     private JTextField searchField;
     private JComboBox<String> filterBox;
     private List<Room> currentRoomList;
 
+    private JLabel totalRoomsLbl;
+    private JLabel totalBedsLbl;
+    private JLabel occupiedBedsLbl;
+    private JLabel availableBedsLbl;
+
     public RoomManagementPanel() {
         setLayout(new BorderLayout(0, 16));
         setBackground(UITheme.BG_MAIN);
-        setBorder(new EmptyBorder(24, 24, 24, 24));
+        setBorder(new EmptyBorder(22, 24, 24, 24));
 
         initUI();
         loadRooms();
     }
 
     private void initUI() {
-        // Toolbar Card
+        JPanel topContainer = new JPanel();
+        topContainer.setLayout(new BoxLayout(topContainer, BoxLayout.Y_AXIS));
+        topContainer.setBackground(UITheme.BG_MAIN);
+
+        // 1. Hostel Room KPI Metric Banner
+        JPanel kpiCard = UITheme.createCard();
+        kpiCard.setLayout(new GridLayout(1, 4, 16, 0));
+
+        totalRoomsLbl = new JLabel("0 Rooms", new VectorIcon(VectorIcon.Type.BUILDING, 20, UITheme.PRIMARY), SwingConstants.LEFT);
+        totalRoomsLbl.setFont(UITheme.FONT_SUBTITLE);
+        totalRoomsLbl.setIconTextGap(8);
+
+        totalBedsLbl = new JLabel("0 Total Beds", new VectorIcon(VectorIcon.Type.BED, 20, new Color(14, 165, 233)), SwingConstants.LEFT);
+        totalBedsLbl.setFont(UITheme.FONT_SUBTITLE);
+        totalBedsLbl.setIconTextGap(8);
+
+        occupiedBedsLbl = new JLabel("0 Occupied", new VectorIcon(VectorIcon.Type.STUDENTS, 20, UITheme.WARNING), SwingConstants.LEFT);
+        occupiedBedsLbl.setFont(UITheme.FONT_SUBTITLE);
+        occupiedBedsLbl.setIconTextGap(8);
+
+        availableBedsLbl = new JLabel("0 Available", new VectorIcon(VectorIcon.Type.CHECK, 20, UITheme.SUCCESS), SwingConstants.LEFT);
+        availableBedsLbl.setFont(UITheme.FONT_SUBTITLE);
+        availableBedsLbl.setIconTextGap(8);
+
+        kpiCard.add(createKpiBox("TOTAL ROOMS", totalRoomsLbl));
+        kpiCard.add(createKpiBox("BED CAPACITY", totalBedsLbl));
+        kpiCard.add(createKpiBox("OCCUPIED BEDS", occupiedBedsLbl));
+        kpiCard.add(createKpiBox("AVAILABLE BEDS", availableBedsLbl));
+
+        topContainer.add(kpiCard);
+        topContainer.add(Box.createVerticalStrut(12));
+
+        // 2. Toolbar Card: Filter + Search + Action Buttons
         JPanel toolbarCard = UITheme.createCard();
         toolbarCard.setLayout(new BorderLayout(16, 0));
 
-        // Left: Filter + Search
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         filterPanel.setBackground(UITheme.BG_CARD);
 
-        JLabel filterLabel = new JLabel("Filter:");
+        JLabel filterLabel = new JLabel("Filter:", new VectorIcon(VectorIcon.Type.FILTER, 14, UITheme.TEXT_MUTED), SwingConstants.LEFT);
         filterLabel.setFont(UITheme.FONT_BODY_BOLD);
+        filterLabel.setIconTextGap(6);
         filterPanel.add(filterLabel);
 
         filterBox = new JComboBox<>(new String[]{"All Rooms", "Available Only", "Occupied Only"});
@@ -90,7 +129,8 @@ public class RoomManagementPanel extends JPanel {
             toolbarCard.add(actionPanel, BorderLayout.EAST);
         }
 
-        add(toolbarCard, BorderLayout.NORTH);
+        topContainer.add(toolbarCard);
+        add(topContainer, BorderLayout.NORTH);
 
         // Center Table
         JPanel tableCard = UITheme.createCard();
@@ -113,13 +153,37 @@ public class RoomManagementPanel extends JPanel {
         add(tableCard, BorderLayout.CENTER);
     }
 
+    private JPanel createKpiBox(String title, JLabel label) {
+        JPanel box = new JPanel();
+        box.setLayout(new BoxLayout(box, BoxLayout.Y_AXIS));
+        box.setOpaque(false);
+        JLabel titleLbl = new JLabel(title);
+        titleLbl.setFont(UITheme.FONT_SMALL_BOLD);
+        titleLbl.setForeground(new Color(100, 116, 139));
+        box.add(titleLbl);
+        box.add(Box.createVerticalStrut(4));
+        box.add(label);
+        return box;
+    }
+
     public void loadRooms() {
         try {
             currentRoomList = roomService.getAllRooms();
             populateTable(currentRoomList);
+            updateKpis();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading rooms: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void updateKpis() {
+        try {
+            RoomDAO.RoomStats stats = roomDAO.getRoomStats();
+            totalRoomsLbl.setText(currentRoomList.size() + " Rooms");
+            totalBedsLbl.setText(stats.totalBeds + " Total Beds");
+            occupiedBedsLbl.setText(stats.occupiedBeds + " Occupied");
+            availableBedsLbl.setText(stats.availableBeds + " Available");
+        } catch (Exception ignored) {}
     }
 
     private void filterRooms() {

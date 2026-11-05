@@ -38,22 +38,51 @@ public class AdminDashboardPanel extends JPanel {
 
     public AdminDashboardPanel(Consumer<String> onNavigate) {
         this.onNavigate = onNavigate;
-        setLayout(new BorderLayout(0, 20));
+        setLayout(new BorderLayout(0, 18));
         setBackground(UITheme.BG_MAIN);
-        setBorder(new EmptyBorder(24, 24, 24, 24));
+        setBorder(new EmptyBorder(22, 24, 24, 24));
 
         initUI();
         loadData();
     }
 
     private void initUI() {
-        // Top: 4 Key Metric Stat Cards with vector icons
+        JPanel topSection = new JPanel();
+        topSection.setLayout(new BoxLayout(topSection, BoxLayout.Y_AXIS));
+        topSection.setBackground(UITheme.BG_MAIN);
+
+        // 1. Campus Banner Card
+        JPanel bannerCard = UITheme.createCard();
+        bannerCard.setLayout(new BorderLayout(16, 0));
+        bannerCard.setBackground(new Color(15, 23, 42));
+
+        JPanel bannerText = new JPanel();
+        bannerText.setLayout(new BoxLayout(bannerText, BoxLayout.Y_AXIS));
+        bannerText.setOpaque(false);
+
+        JLabel bannerTitle = new JLabel("Campus Administration & Residence Control");
+        bannerTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        bannerTitle.setForeground(Color.WHITE);
+
+        JLabel bannerSub = new JLabel("Central monitoring for student residency, live room allocation, and financial auditing.");
+        bannerSub.setFont(UITheme.FONT_BODY);
+        bannerSub.setForeground(new Color(203, 213, 225));
+
+        bannerText.add(bannerTitle);
+        bannerText.add(Box.createVerticalStrut(3));
+        bannerText.add(bannerSub);
+        bannerCard.add(bannerText, BorderLayout.CENTER);
+
+        topSection.add(bannerCard);
+        topSection.add(Box.createVerticalStrut(14));
+
+        // 2. Metric Stat Cards with Progress Bars
         JPanel statsPanel = new JPanel(new GridLayout(1, 4, 16, 0));
         statsPanel.setBackground(UITheme.BG_MAIN);
 
         cardStudents = new StatCard("Total Students", "0", "Enrolled Residents", UITheme.PRIMARY, VectorIcon.Type.STUDENTS);
-        cardRooms = new StatCard("Hostel Capacity", "0 / 0", "Occupied / Total Beds", UITheme.INFO, VectorIcon.Type.ROOMS);
-        cardFees = new StatCard("Fee Collection", UITheme.formatCurrency(null), "Pending Dues", UITheme.SUCCESS, VectorIcon.Type.FEES);
+        cardRooms = new StatCard("Hostel Capacity", "0 / 0", "Occupied / Total Beds", new Color(14, 165, 233), VectorIcon.Type.BED, 0);
+        cardFees = new StatCard("Fee Collection", UITheme.formatCurrency(null), "Verified Revenue", UITheme.SUCCESS, VectorIcon.Type.FEES, 0);
         cardComplaints = new StatCard("Open Complaints", "0", "Requires Attention", UITheme.DANGER, VectorIcon.Type.COMPLAINTS);
 
         statsPanel.add(cardStudents);
@@ -61,13 +90,14 @@ public class AdminDashboardPanel extends JPanel {
         statsPanel.add(cardFees);
         statsPanel.add(cardComplaints);
 
-        add(statsPanel, BorderLayout.NORTH);
+        topSection.add(statsPanel);
+        add(topSection, BorderLayout.NORTH);
 
-        // Center: Quick Actions & Recent Activities
+        // Center: Interactive Quick Action Grid + Audit Trail
         JPanel contentPanel = new JPanel(new BorderLayout(0, 16));
         contentPanel.setBackground(UITheme.BG_MAIN);
 
-        // Quick Actions Bar
+        // Quick Actions Grid
         JPanel actionsCard = UITheme.createCard();
         actionsCard.setLayout(new FlowLayout(FlowLayout.LEFT, 12, 4));
 
@@ -76,11 +106,15 @@ public class AdminDashboardPanel extends JPanel {
         actionLabel.setForeground(UITheme.TEXT_MAIN);
         actionsCard.add(actionLabel);
 
-        JButton btnAddStudent = UITheme.createPrimaryButton("Register Student", new VectorIcon(VectorIcon.Type.ADD, 15, Color.WHITE));
+        JButton btnAddStudent = UITheme.createPrimaryButton("Register Student", new VectorIcon(VectorIcon.Type.USER_PLUS, 15, Color.WHITE));
         btnAddStudent.addActionListener(e -> onNavigate.accept("STUDENTS"));
         actionsCard.add(btnAddStudent);
 
-        JButton btnAllocate = UITheme.createSecondaryButton("Allocate Room", new VectorIcon(VectorIcon.Type.ALLOCATION, 15, UITheme.TEXT_MAIN));
+        JButton btnRooms = UITheme.createSecondaryButton("Hostel Rooms", new VectorIcon(VectorIcon.Type.BED, 15, UITheme.TEXT_MAIN));
+        btnRooms.addActionListener(e -> onNavigate.accept("ROOMS"));
+        actionsCard.add(btnRooms);
+
+        JButton btnAllocate = UITheme.createSecondaryButton("Room Allocation", new VectorIcon(VectorIcon.Type.KEY, 15, UITheme.TEXT_MAIN));
         btnAllocate.addActionListener(e -> onNavigate.accept("ALLOCATION"));
         actionsCard.add(btnAllocate);
 
@@ -88,9 +122,13 @@ public class AdminDashboardPanel extends JPanel {
         btnFees.addActionListener(e -> onNavigate.accept("FEES"));
         actionsCard.add(btnFees);
 
-        JButton btnComplaints = UITheme.createSecondaryButton("View Complaints", new VectorIcon(VectorIcon.Type.COMPLAINTS, 15, UITheme.TEXT_MAIN));
+        JButton btnComplaints = UITheme.createSecondaryButton("Maintenance Queue", new VectorIcon(VectorIcon.Type.COMPLAINTS, 15, UITheme.TEXT_MAIN));
         btnComplaints.addActionListener(e -> onNavigate.accept("COMPLAINTS"));
         actionsCard.add(btnComplaints);
+
+        JButton btnReports = UITheme.createSecondaryButton("System Reports", new VectorIcon(VectorIcon.Type.REPORTS, 15, UITheme.TEXT_MAIN));
+        btnReports.addActionListener(e -> onNavigate.accept("REPORTS"));
+        actionsCard.add(btnReports);
 
         contentPanel.add(actionsCard, BorderLayout.NORTH);
 
@@ -98,7 +136,8 @@ public class AdminDashboardPanel extends JPanel {
         JPanel tableCard = UITheme.createCard();
         tableCard.setLayout(new BorderLayout(0, 12));
 
-        JLabel tableTitle = new JLabel("System Audit Trail & Recent Activities");
+        JLabel tableTitle = new JLabel("System Audit Trail & Recent Activities", new VectorIcon(VectorIcon.Type.SHIELD_CHECK, 18, UITheme.PRIMARY), SwingConstants.LEFT);
+        tableTitle.setIconTextGap(8);
         tableTitle.setFont(UITheme.FONT_SUBTITLE);
         tableTitle.setForeground(UITheme.TEXT_MAIN);
         tableCard.add(tableTitle, BorderLayout.NORTH);
@@ -124,10 +163,15 @@ public class AdminDashboardPanel extends JPanel {
             RoomDAO.RoomStats rStats = roomDAO.getRoomStats();
             cardRooms.setValue(rStats.occupiedBeds + " / " + rStats.totalBeds);
             cardRooms.setSubtitle("Available Beds: " + rStats.availableBeds);
+            int occupancyPercent = rStats.totalBeds > 0 ? (rStats.occupiedBeds * 100) / rStats.totalBeds : 0;
+            cardRooms.setProgress(occupancyPercent);
 
             FeeDAO.FeeSummary fStats = feeDAO.getFeeSummary();
             cardFees.setValue(UITheme.formatCurrency(fStats.collectedFees));
             cardFees.setSubtitle("Pending: " + UITheme.formatCurrency(fStats.pendingFees));
+            double totalInvoiced = fStats.totalFees.doubleValue();
+            int feePercent = totalInvoiced > 0 ? (int) ((fStats.collectedFees.doubleValue() * 100) / totalInvoiced) : 0;
+            cardFees.setProgress(feePercent);
 
             ComplaintDAO.ComplaintSummary cStats = complaintDAO.getComplaintSummary();
             cardComplaints.setValue(String.valueOf(cStats.pending + cStats.inProgress));

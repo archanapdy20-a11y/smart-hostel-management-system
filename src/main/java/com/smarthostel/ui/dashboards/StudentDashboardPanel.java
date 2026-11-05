@@ -100,7 +100,7 @@ public class StudentDashboardPanel extends JPanel {
         roomTextBox.add(Box.createVerticalStrut(2));
         roomTextBox.add(roomSubLabel);
         cardRoom.add(roomTextBox, BorderLayout.CENTER);
-        cardRoom.add(UITheme.createIconCircle(VectorIcon.Type.ROOMS, UITheme.PRIMARY, 42, 20), BorderLayout.EAST);
+        cardRoom.add(UITheme.createIconCircle(VectorIcon.Type.BED, UITheme.PRIMARY, 42, 20), BorderLayout.EAST);
         cardsPanel.add(cardRoom);
 
         // Fee Card
@@ -183,7 +183,7 @@ public class StudentDashboardPanel extends JPanel {
         JPanel notifCard = UITheme.createCard();
         notifCard.setLayout(new BorderLayout(0, 12));
 
-        JLabel notifHeader = new JLabel("Announcements & Notices", new VectorIcon(VectorIcon.Type.INFO, 18, UITheme.INFO), SwingConstants.LEFT);
+        JLabel notifHeader = new JLabel("Announcements & Notices", new VectorIcon(VectorIcon.Type.BELL, 18, UITheme.INFO), SwingConstants.LEFT);
         notifHeader.setIconTextGap(8);
         notifHeader.setFont(UITheme.FONT_SUBTITLE);
         notifHeader.setForeground(UITheme.TEXT_MAIN);
@@ -268,23 +268,29 @@ public class StudentDashboardPanel extends JPanel {
                 menuContainer.add(emptyMenu);
             } else {
                 for (FoodMenu m : todayMenu) {
-                    JPanel mealRow = new JPanel(new BorderLayout(8, 4));
+                    JPanel mealRow = new JPanel(new BorderLayout(10, 6));
                     mealRow.setBackground(UITheme.BG_SUBTLE);
-                    mealRow.setBorder(new EmptyBorder(8, 12, 8, 12));
+                    mealRow.setBorder(new EmptyBorder(10, 14, 10, 14));
 
-                    JLabel typeLbl = new JLabel(m.getMealType().toUpperCase());
+                    String meal = m.getMealType().toUpperCase();
+                    Color badgeBg = meal.contains("BREAKFAST") ? new Color(254, 243, 199) : (meal.contains("LUNCH") ? new Color(220, 252, 231) : new Color(224, 231, 255));
+                    Color badgeFg = meal.contains("BREAKFAST") ? new Color(180, 83, 9) : (meal.contains("LUNCH") ? new Color(22, 101, 52) : new Color(67, 56, 202));
+
+                    JLabel typeLbl = new JLabel(" " + meal + " ");
+                    typeLbl.setOpaque(true);
+                    typeLbl.setBackground(badgeBg);
+                    typeLbl.setForeground(badgeFg);
                     typeLbl.setFont(UITheme.FONT_SMALL_BOLD);
-                    typeLbl.setForeground(UITheme.PRIMARY);
 
-                    JLabel itemsLbl = new JLabel("<html><b>" + m.getMenuItems() + "</b></html>");
-                    itemsLbl.setFont(UITheme.FONT_BODY);
+                    JLabel itemsLbl = new JLabel("<html><body style='width: 280px;'>" + m.getMenuItems() + "</body></html>");
+                    itemsLbl.setFont(UITheme.FONT_BODY_BOLD);
                     itemsLbl.setForeground(UITheme.TEXT_MAIN);
 
-                    mealRow.add(typeLbl, BorderLayout.NORTH);
+                    mealRow.add(typeLbl, BorderLayout.WEST);
                     mealRow.add(itemsLbl, BorderLayout.CENTER);
 
                     menuContainer.add(mealRow);
-                    menuContainer.add(Box.createVerticalStrut(8));
+                    menuContainer.add(Box.createVerticalStrut(10));
                 }
             }
             menuContainer.revalidate();
@@ -310,8 +316,8 @@ public class StudentDashboardPanel extends JPanel {
                     notifRow.setBackground(UITheme.BG_CARD);
                     notifRow.setBorder(new EmptyBorder(6, 4, 10, 4));
 
-                    JLabel titleLbl = new JLabel(n.getTitle(), new VectorIcon(VectorIcon.Type.CHECK, 12, UITheme.PRIMARY), SwingConstants.LEFT);
-                    titleLbl.setIconTextGap(6);
+                    JLabel titleLbl = new JLabel(n.getTitle(), new VectorIcon(VectorIcon.Type.BELL, 13, UITheme.PRIMARY), SwingConstants.LEFT);
+                    titleLbl.setIconTextGap(8);
                     titleLbl.setFont(UITheme.FONT_BODY_BOLD);
                     titleLbl.setForeground(UITheme.TEXT_MAIN);
 

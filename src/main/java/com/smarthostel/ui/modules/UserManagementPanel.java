@@ -42,7 +42,8 @@ public class UserManagementPanel extends JPanel {
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         filterPanel.setBackground(UITheme.BG_CARD);
 
-        JLabel filterLabel = new JLabel("Role Filter:");
+        JLabel filterLabel = new JLabel("Role Filter:", new VectorIcon(VectorIcon.Type.FILTER, 13, UITheme.TEXT_MUTED), SwingConstants.LEFT);
+        filterLabel.setIconTextGap(6);
         filterLabel.setFont(UITheme.FONT_BODY_BOLD);
         filterPanel.add(filterLabel);
 
@@ -74,7 +75,7 @@ public class UserManagementPanel extends JPanel {
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         actionPanel.setBackground(UITheme.BG_CARD);
 
-        JButton btnAdd = UITheme.createPrimaryButton("Add Staff Account", new VectorIcon(VectorIcon.Type.ADD, 14, Color.WHITE));
+        JButton btnAdd = UITheme.createPrimaryButton("Add Staff Account", new VectorIcon(VectorIcon.Type.USER_PLUS, 14, Color.WHITE));
         btnAdd.addActionListener(e -> showAddStaffDialog());
         actionPanel.add(btnAdd);
 

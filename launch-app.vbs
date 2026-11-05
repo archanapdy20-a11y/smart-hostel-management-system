@@ -15,3 +15,4 @@ ElseIf fso.FileExists(jarPath) Then
 Else
     shell.Run "cmd /c """ & baseDir & "\run.bat""", 1, False
 End If
+

@@ -43,7 +43,8 @@ public class FoodMenuPanel extends JPanel {
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         filterPanel.setBackground(UITheme.BG_CARD);
 
-        JLabel viewLbl = new JLabel("View Period:");
+        JLabel viewLbl = new JLabel("View Period:", new VectorIcon(VectorIcon.Type.FILTER, 13, UITheme.TEXT_MUTED), SwingConstants.LEFT);
+        viewLbl.setIconTextGap(6);
         viewLbl.setFont(UITheme.FONT_BODY_BOLD);
         filterPanel.add(viewLbl);
 

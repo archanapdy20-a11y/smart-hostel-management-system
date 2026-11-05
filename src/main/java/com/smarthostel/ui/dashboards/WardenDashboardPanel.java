@@ -37,30 +37,60 @@ public class WardenDashboardPanel extends JPanel {
 
     public WardenDashboardPanel(Consumer<String> onNavigate) {
         this.onNavigate = onNavigate;
-        setLayout(new BorderLayout(0, 20));
+        setLayout(new BorderLayout(0, 18));
         setBackground(UITheme.BG_MAIN);
-        setBorder(new EmptyBorder(24, 24, 24, 24));
+        setBorder(new EmptyBorder(22, 24, 24, 24));
 
         initUI();
         loadData();
     }
 
     private void initUI() {
-        // Top: 4 Stat Cards with vector badges
+        JPanel topSection = new JPanel();
+        topSection.setLayout(new BoxLayout(topSection, BoxLayout.Y_AXIS));
+        topSection.setBackground(UITheme.BG_MAIN);
+
+        // 1. Warden Residency Overview Banner
+        JPanel bannerCard = UITheme.createCard();
+        bannerCard.setLayout(new BorderLayout(16, 0));
+        bannerCard.setBackground(new Color(15, 23, 42));
+
+        JPanel bannerText = new JPanel();
+        bannerText.setLayout(new BoxLayout(bannerText, BoxLayout.Y_AXIS));
+        bannerText.setOpaque(false);
+
+        JLabel bannerTitle = new JLabel("Hostel Warden Supervision & Facility Management");
+        bannerTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        bannerTitle.setForeground(Color.WHITE);
+
+        JLabel bannerSub = new JLabel("Oversee room occupancy, manage daily bed allocations, resolve maintenance grievances, and monitor mess quality.");
+        bannerSub.setFont(UITheme.FONT_BODY);
+        bannerSub.setForeground(new Color(203, 213, 225));
+
+        bannerText.add(bannerTitle);
+        bannerText.add(Box.createVerticalStrut(3));
+        bannerText.add(bannerSub);
+        bannerCard.add(bannerText, BorderLayout.CENTER);
+
+        topSection.add(bannerCard);
+        topSection.add(Box.createVerticalStrut(14));
+
+        // 2. 4 Stat Cards with Progress Bars
         JPanel statsPanel = new JPanel(new GridLayout(1, 4, 16, 0));
         statsPanel.setBackground(UITheme.BG_MAIN);
 
         cardStudents = new StatCard("Hostel Residents", "0", "Enrolled Students", UITheme.PRIMARY, VectorIcon.Type.STUDENTS);
-        cardAvailableBeds = new StatCard("Available Beds", "0", "Ready for Allocation", UITheme.SUCCESS, VectorIcon.Type.ROOMS);
+        cardAvailableBeds = new StatCard("Available Beds", "0", "Ready for Allocation", UITheme.SUCCESS, VectorIcon.Type.BED, 0);
         cardPendingComplaints = new StatCard("Open Complaints", "0", "Pending Action", UITheme.DANGER, VectorIcon.Type.COMPLAINTS);
-        cardFoodRating = new StatCard("Mess Food Rating", "0.0 / 5.0", "Resident Reviews", UITheme.WARNING, VectorIcon.Type.FOOD_FEEDBACK);
+        cardFoodRating = new StatCard("Mess Food Rating", "0.0 / 5.0", "Resident Reviews", UITheme.WARNING, VectorIcon.Type.FOOD_FEEDBACK, 0);
 
         statsPanel.add(cardStudents);
         statsPanel.add(cardAvailableBeds);
         statsPanel.add(cardPendingComplaints);
         statsPanel.add(cardFoodRating);
 
-        add(statsPanel, BorderLayout.NORTH);
+        topSection.add(statsPanel);
+        add(topSection, BorderLayout.NORTH);
 
         // Center: Complaints requiring Warden attention
         JPanel centerPanel = new JPanel(new BorderLayout(0, 16));
@@ -75,9 +105,13 @@ public class WardenDashboardPanel extends JPanel {
         actionLabel.setForeground(UITheme.TEXT_MAIN);
         actionsCard.add(actionLabel);
 
-        JButton btnManageAlloc = UITheme.createPrimaryButton("Room Allocation", new VectorIcon(VectorIcon.Type.ALLOCATION, 15, Color.WHITE));
+        JButton btnManageAlloc = UITheme.createPrimaryButton("Room Allocation", new VectorIcon(VectorIcon.Type.KEY, 15, Color.WHITE));
         btnManageAlloc.addActionListener(e -> onNavigate.accept("ALLOCATION"));
         actionsCard.add(btnManageAlloc);
+
+        JButton btnRooms = UITheme.createSecondaryButton("Room Availability", new VectorIcon(VectorIcon.Type.BED, 15, UITheme.TEXT_MAIN));
+        btnRooms.addActionListener(e -> onNavigate.accept("ROOMS"));
+        actionsCard.add(btnRooms);
 
         JButton btnAllComplaints = UITheme.createSecondaryButton("Resolve Complaints", new VectorIcon(VectorIcon.Type.COMPLAINTS, 15, UITheme.TEXT_MAIN));
         btnAllComplaints.addActionListener(e -> onNavigate.accept("COMPLAINTS"));
@@ -87,7 +121,7 @@ public class WardenDashboardPanel extends JPanel {
         btnViewMenu.addActionListener(e -> onNavigate.accept("FOOD_MENU"));
         actionsCard.add(btnViewMenu);
 
-        JButton btnFeedback = UITheme.createSecondaryButton("Resident Feedback", new VectorIcon(VectorIcon.Type.FOOD_FEEDBACK, 15, UITheme.TEXT_MAIN));
+        JButton btnFeedback = UITheme.createSecondaryButton("Resident Feedback", new VectorIcon(VectorIcon.Type.STAR, 15, UITheme.TEXT_MAIN));
         btnFeedback.addActionListener(e -> onNavigate.accept("FOOD_FEEDBACK"));
         actionsCard.add(btnFeedback);
 
@@ -97,7 +131,8 @@ public class WardenDashboardPanel extends JPanel {
         JPanel tableCard = UITheme.createCard();
         tableCard.setLayout(new BorderLayout(0, 12));
 
-        JLabel tableTitle = new JLabel("High Priority & Pending Hostel Complaints");
+        JLabel tableTitle = new JLabel("High Priority & Pending Hostel Complaints", new VectorIcon(VectorIcon.Type.COMPLAINTS, 18, UITheme.DANGER), SwingConstants.LEFT);
+        tableTitle.setIconTextGap(8);
         tableTitle.setFont(UITheme.FONT_SUBTITLE);
         tableTitle.setForeground(UITheme.TEXT_MAIN);
         tableCard.add(tableTitle, BorderLayout.NORTH);
@@ -122,7 +157,9 @@ public class WardenDashboardPanel extends JPanel {
 
             RoomDAO.RoomStats rStats = roomDAO.getRoomStats();
             cardAvailableBeds.setValue(String.valueOf(rStats.availableBeds));
-            cardAvailableBeds.setSubtitle("Total Beds: " + rStats.totalBeds);
+            cardAvailableBeds.setSubtitle("Total Capacity: " + rStats.totalBeds + " Beds");
+            int availablePercent = rStats.totalBeds > 0 ? (rStats.availableBeds * 100) / rStats.totalBeds : 0;
+            cardAvailableBeds.setProgress(availablePercent);
 
             ComplaintDAO.ComplaintSummary cStats = complaintDAO.getComplaintSummary();
             cardPendingComplaints.setValue(String.valueOf(cStats.pending + cStats.inProgress));
@@ -130,6 +167,8 @@ public class WardenDashboardPanel extends JPanel {
 
             double rating = foodFeedbackDAO.getAverageRating();
             cardFoodRating.setValue(String.format("%.1f / 5.0", rating));
+            int ratingPercent = (int) ((rating / 5.0) * 100);
+            cardFoodRating.setProgress(ratingPercent);
 
             // Complaints
             complaintsTableModel.setRowCount(0);

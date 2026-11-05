@@ -8,6 +8,7 @@ import com.smarthostel.service.AllocationService;
 import com.smarthostel.service.RoomService;
 import com.smarthostel.service.StudentService;
 import com.smarthostel.ui.components.ModernTable;
+import com.smarthostel.ui.components.StatCard;
 import com.smarthostel.ui.components.VectorIcon;
 import com.smarthostel.util.DateUtil;
 import com.smarthostel.util.UITheme;
@@ -30,6 +31,11 @@ public class RoomAllocationPanel extends JPanel {
     private JCheckBox activeOnlyCheck;
     private JTextField searchField;
     private List<Allocation> currentAllocations;
+
+    private StatCard totalAllocCard;
+    private StatCard activeAllocCard;
+    private StatCard vacatedCard;
+    private StatCard availableRoomsCard;
 
     public RoomAllocationPanel() {
         setLayout(new BorderLayout(0, 16));
@@ -92,7 +98,23 @@ public class RoomAllocationPanel extends JPanel {
             toolbarCard.add(actionPanel, BorderLayout.EAST);
         }
 
-        add(toolbarCard, BorderLayout.NORTH);
+        // KPI Metric Banner
+        JPanel kpiPanel = new JPanel(new GridLayout(1, 4, 16, 0));
+        kpiPanel.setOpaque(false);
+        totalAllocCard = new StatCard("TOTAL ALLOCATIONS", "0", VectorIcon.Type.KEY, UITheme.PRIMARY);
+        activeAllocCard = new StatCard("ACTIVE RESIDENTS", "0", VectorIcon.Type.STUDENTS, UITheme.SUCCESS);
+        vacatedCard = new StatCard("VACATED HISTORY", "0", VectorIcon.Type.LOGOUT, UITheme.WARNING);
+        availableRoomsCard = new StatCard("ROOMS WITH VACANCY", "0", VectorIcon.Type.BED, UITheme.INFO);
+        kpiPanel.add(totalAllocCard);
+        kpiPanel.add(activeAllocCard);
+        kpiPanel.add(vacatedCard);
+        kpiPanel.add(availableRoomsCard);
+
+        JPanel topContainer = new JPanel(new BorderLayout(0, 14));
+        topContainer.setOpaque(false);
+        topContainer.add(kpiPanel, BorderLayout.NORTH);
+        topContainer.add(toolbarCard, BorderLayout.SOUTH);
+        add(topContainer, BorderLayout.NORTH);
 
         // Allocations Table
         JPanel tableCard = UITheme.createCard();
@@ -130,9 +152,25 @@ public class RoomAllocationPanel extends JPanel {
             }
 
             populateTable(currentAllocations);
+            updateKpiMetrics();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading allocations: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void updateKpiMetrics() {
+        long total = currentAllocations != null ? currentAllocations.size() : 0;
+        long active = currentAllocations != null ? currentAllocations.stream().filter(a -> "ACTIVE".equalsIgnoreCase(a.getStatus())).count() : 0;
+        long vacated = currentAllocations != null ? currentAllocations.stream().filter(a -> "VACATED".equalsIgnoreCase(a.getStatus())).count() : 0;
+        int availRooms = 0;
+        try {
+            availRooms = roomService.getAvailableRooms().size();
+        } catch (Exception ignored) {}
+
+        if (totalAllocCard != null) totalAllocCard.setValue(String.valueOf(total));
+        if (activeAllocCard != null) activeAllocCard.setValue(String.valueOf(active));
+        if (vacatedCard != null) vacatedCard.setValue(String.valueOf(vacated));
+        if (availableRoomsCard != null) availableRoomsCard.setValue(String.valueOf(availRooms));
     }
 
     private void searchAllocations() {

@@ -78,6 +78,10 @@ public class UITheme {
         return CURRENCY_SYMBOL + " " + String.format("%,.2f", amount.doubleValue());
     }
 
+    public static String formatCurrency(double amount) {
+        return formatCurrency(BigDecimal.valueOf(amount));
+    }
+
     public static JButton createPrimaryButton(String text) {
         return createPrimaryButton(text, null);
     }

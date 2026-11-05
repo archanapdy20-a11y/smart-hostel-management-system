@@ -14,3 +14,4 @@ if not exist "%EXE_PATH%" (
 powershell -NoProfile -ExecutionPolicy Bypass -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut([IO.Path]::Combine([Environment]::GetFolderPath('Desktop'), 'Smart Hostel Management System.lnk')); $s.TargetPath = '%EXE_PATH%'; $s.WorkingDirectory = [IO.Path]::GetDirectoryName('%EXE_PATH%'); $s.IconLocation = '%ICON_PATH%,0'; $s.Description = 'Smart Hostel Management System'; $s.Save(); Write-Host 'Shortcut created successfully on Desktop!'"
 
 pause
+
